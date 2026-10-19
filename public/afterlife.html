@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Afterlife — USDC Inheritance Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<style>
+  :root {
+    --bg-gradient: linear-gradient(180deg,#f9f9fc 0%,#fffcf7 52%,#fbf7f2 100%);
+    --surface: rgba(255,255,255,0.72);
+    --surface-strong: rgba(255,255,255,0.92);
+    --surface-muted: #f5f5f8;
+    --ink: #122d45;
+    --ink-2: #334155;
+    --muted: #6b6580;
+    --subtle: #8a849c;
+    --border: rgba(18,45,69,0.12);
+    --accent: #122d45;
+    --accent-hover: #1061a6;
+    --success: #1a8047;
+    --danger: #ba2b4c;
+    --warning-bg: #fffbeb;
+    --warning-border: #fcd34d;
+    --warning-text: #92400e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg-gradient);color:var(--ink);min-height:100dvh}
+  .display{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.03em}
+  .mono{font-family:'JetBrains Mono',Menlo,monospace}
+  .tabular{font-variant-numeric:tabular-nums}
+  header{position:sticky;top:0;z-index:20;background:var(--surface);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .hinner{max-width:600px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .htitle{font-size:18px;font-weight:700;line-height:1}
+  .hsubtitle{font-size:11px;color:var(--muted);margin-top:3px}
+  main{max-width:600px;margin:0 auto;padding:24px 16px;display:flex;flex-direction:column;gap:20px}
+  .card{background:var(--surface);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .card-muted{background:var(--surface-muted);border-radius:12px;padding:12px}
+  label.lbl{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:6px}
+  input[type="text"],input[type="number"]{width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface-muted);padding:8px 12px;font-size:13px;color:var(--ink);outline:none;font-family:inherit}
+  input[type="text"]:focus,input[type="number"]:focus{border-color:#85b1ed}
+  .btn{padding:9px 18px;border-radius:12px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;font-family:inherit;line-height:1}
+  .btn:active{transform:scale(0.97)}
+  .btn:disabled{opacity:0.4;cursor:not-allowed}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--accent-hover)}
+  .btn-danger{background:var(--danger);color:#fff}
+  .btn-danger:hover:not(:disabled){opacity:0.88}
+  .btn-ghost{background:transparent;color:var(--accent-hover);text-decoration:underline;padding:6px 4px}
+  .tab-bar{display:flex;gap:4px;background:var(--surface-muted);border-radius:14px;padding:4px}
+  .tab-btn{flex:1;padding:8px;font-size:12px;font-weight:700;border-radius:10px;border:none;cursor:pointer;font-family:inherit;transition:all 0.15s;color:var(--muted);background:transparent}
+  .tab-btn.active{background:var(--accent);color:#fff;box-shadow:0 1px 4px rgba(18,45,69,0.15)}
+  .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat-box{background:var(--surface-muted);border-radius:10px;padding:12px}
+  .stat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
+  .stat-value{font-size:20px;font-weight:700;margin-top:2px}
+  .status-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;padding:3px 8px;border-radius:99px;border:1.5px solid currentColor}
+  .status-Active{color:var(--success)}
+  .status-Released{color:#d97706}
+  .status-Closed{color:var(--muted)}
+  .status-None{color:var(--subtle)}
+  .tx-link{font-size:11px;color:var(--accent-hover);text-decoration:underline;display:block;margin-top:6px}
+  .warn{background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--warning-text)}
+  .divider{border:none;border-top:1px solid var(--border);margin:12px 0}
+  .row{display:flex;align-items:center;gap:8px}
+  .row-between{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .beneficiary-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+  .beneficiary-row input.addr{flex:1}
+  .beneficiary-row input.share{width:72px}
+  .space-y>*+*{margin-top:12px}
+  .text-xs{font-size:12px}
+  .text-muted{color:var(--muted)}
+  .text-subtle{color:var(--subtle)}
+  .text-danger{color:var(--danger)}
+  .text-success{color:var(--success)}
+  .text-warning{color:#d97706}
+  .connect-hero{text-align:center;padding:60px 16px 32px}
+  .connect-hero h2{font-size:36px;font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:12px}
+  .connect-hero p{font-size:14px;color:var(--muted);max-width:320px;margin:0 auto 24px}
+  #status-bar{padding:8px 12px;font-size:12px;border-radius:10px;display:none}
+  #status-bar.show{display:block}
+  #status-bar.pending{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+  #status-bar.success{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+  #status-bar.error{background:#fff1f2;color:#be123c;border:1px solid #fda4af}
+  .countdown-expired{color:var(--danger)!important}
+</style>
+</head>
+<body>
+
+<!-- ─── CONTRACT CONFIG ───────────────────────────────────────────────────── -->
+<script>
+// Deployed on Arc Testnet
+const AFTERLIFE_ADDRESS = '0x4d64cb8bd361061b92fe983c7326e172eb6fef7b';
+
+const ARC_TESTNET = {
+  chainId: 5042002,
+  chainIdHex: '0x4CCAB2',
+  name: 'Arc Testnet',
+  rpc: 'https://rpc.testnet.arc.io',
+  explorer: 'https://explorer.testnet.arc.io',
+};
+
+const ARC_MAINNET = {
+  chainId: 5042,
+  chainIdHex: '0x13B2',
+  name: 'Arc',
+  rpc: 'https://rpc.mainnet.arc.io',
+  explorer: 'https://explorer.arc.io',
+};
+
+// Default to testnet; switch to ARC_MAINNET for mainnet use
+const CHAIN = ARC_TESTNET;
+
+const USDC_ADDRESS = '0x3600000000000000000000000000000000000000';
+const USDC_DECIMALS = 6;
+
+const AFTERLIFE_ABI = [
+  "function createVault(bytes32 name_, address[] calldata beneficiaries_, uint16[] calldata shares_, uint256 window_, uint256 initialDeposit_) external returns (uint256 id)",
+  "function deposit(uint256 id, uint256 amount) external",
+  "function checkIn(uint256 id) external",
+  "function withdraw(uint256 id, uint256 amount) external",
+  "function setBeneficiaries(uint256 id, address[] calldata beneficiaries_, uint16[] calldata shares_) external",
+  "function close(uint256 id) external",
+  "function release(uint256 id) external",
+  "function claim(uint256 id, uint256 index) external",
+  "function claimAll(uint256 id) external",
+  "function getVault(uint256 id) external view returns (address owner, bytes32 name, uint256 window, uint256 lastCheckIn, uint256 balance, uint256 releasedBalance, uint8 status, address[] memory beneficiaryAddrs, uint16[] memory beneficiaryShares)",
+  "function vaultsOfOwner(address owner) external view returns (uint256[] memory)",
+  "function vaultsOfBeneficiary(address beneficiary) external view returns (uint256[] memory)",
+  "function deadline(uint256 id) external view returns (uint256)",
+  "function isExpired(uint256 id) external view returns (bool)",
+  "function shareOf(uint256 id, address beneficiary) external view returns (uint16)",
+  "function claimedAmount(uint256 id, uint256 index) external view returns (uint256)",
+  "function nextVaultId() external view returns (uint256)",
+  "function minWindow() external view returns (uint256)",
+];
+
+const ERC20_ABI = [
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function balanceOf(address account) external view returns (uint256)",
+];
+</script>
+
+<header>
+  <div class="hinner">
+    <div>
+      <div class="display htitle">Afterlife</div>
+      <div class="hsubtitle">USDC Inheritance Vault · <span id="chain-label">Not connected</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="wallet-address" class="mono text-xs text-muted"></span>
+      <button id="connect-btn" class="btn btn-primary" onclick="connectWallet()">Connect Wallet</button>
+      <button id="disconnect-btn" class="btn" style="display:none;background:var(--surface-muted);color:var(--ink)" onclick="disconnect()">Disconnect</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="not-deployed-warn" class="warn" style="display:none">
+    Contract not yet deployed. Fill in <code class="mono" style="font-size:11px">AFTERLIFE_ADDRESS</code> at the top of this file.
+  </div>
+
+  <div id="connect-hero" class="connect-hero">
+    <h2 class="display">Your digital estate,<br>protected forever.</h2>
+    <p>Create a USDC vault on Arc. Check in regularly. If you stop, your beneficiaries receive everything automatically.</p>
+    <button class="btn btn-primary" onclick="connectWallet()" style="font-size:14px;padding:12px 28px">Connect Wallet</button>
+  </div>
+
+  <div id="app-content" style="display:none">
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="my-vaults" onclick="switchTab('my-vaults')">My Vaults</button>
+      <button class="tab-btn" data-tab="inheritances" onclick="switchTab('inheritances')">Inheritances</button>
+      <button class="tab-btn" data-tab="lookup" onclick="switchTab('lookup')">Look Up</button>
+      <button class="tab-btn" data-tab="create" onclick="switchTab('create')">Create</button>
+    </div>
+
+    <!-- Status bar -->
+    <div id="status-bar"></div>
+
+    <!-- My Vaults panel -->
+    <div id="panel-my-vaults">
+      <div id="my-vaults-list"></div>
+    </div>
+
+    <!-- Inheritances panel -->
+    <div id="panel-inheritances" style="display:none">
+      <div id="inheritances-list"></div>
+    </div>
+
+    <!-- Look Up panel -->
+    <div id="panel-lookup" style="display:none">
+      <div class="card">
+        <div class="row" style="margin-bottom:0">
+          <input type="number" id="lookup-id-input" placeholder="Vault ID (e.g. 0)" min="0" style="flex:1" />
+          <button class="btn btn-primary" onclick="lookupVault()">Load</button>
+        </div>
+      </div>
+      <div id="lookup-result" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Create panel -->
+    <div id="panel-create" style="display:none">
+      <div class="card">
+        <h2 class="display" style="font-size:17px;font-weight:700;margin-bottom:16px;color:var(--ink)">Create Vault</h2>
+        <div class="space-y">
+          <div>
+            <label class="lbl">Vault Name (max 31 chars)</label>
+            <input type="text" id="cv-name" maxlength="31" placeholder="My Digital Estate" />
+          </div>
+          <div>
+            <label class="lbl">Inactivity Window (days)</label>
+            <input type="number" id="cv-window" value="365" min="1" max="3650" />
+            <p class="text-xs text-subtle" style="margin-top:4px">If you miss check-ins for this many days, beneficiaries can claim the vault.</p>
+          </div>
+          <div>
+            <label class="lbl">Initial Deposit (USDC, optional)</label>
+            <input type="number" id="cv-deposit" placeholder="100.00" min="0" step="0.000001" />
+          </div>
+          <div>
+            <div class="row-between" style="margin-bottom:8px">
+              <label class="lbl" style="margin-bottom:0">Beneficiaries</label>
+              <span id="cv-shares-total" class="text-xs tabular" style="font-weight:700;color:var(--danger)">0 / 10000 bp</span>
+            </div>
+            <div id="cv-beneficiaries"></div>
+            <button class="btn-ghost btn" onclick="addBeneficiary()" style="margin-top:4px;font-size:12px">+ Add beneficiary</button>
+            <p class="text-xs text-subtle" style="margin-top:4px">Shares in basis points — must total exactly 10000. Last beneficiary gets rounding remainder.</p>
+          </div>
+        </div>
+        <hr class="divider" />
+        <button id="cv-submit" class="btn btn-primary" onclick="createVault()" style="width:100%">Approve &amp; Create Vault</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let provider = null;
+let signer = null;
+let userAddress = null;
+let afterlife = null;
+let usdc = null;
+let countdownIntervals = [];
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function parseUsdc(val) {
+  return ethers.parseUnits(String(parseFloat(val) || 0), USDC_DECIMALS);
+}
+
+function formatUsdc(raw) {
+  if (raw === undefined || raw === null) return '—';
+  return parseFloat(ethers.formatUnits(raw, USDC_DECIMALS)).toLocaleString('en-US', {
+    minimumFractionDigits: 2, maximumFractionDigits: 6
+  });
+}
+
+function shortAddr(addr) {
+  return addr ? addr.slice(0, 6) + '…' + addr.slice(-4) : '—';
+}
+
+function encodeBytes32(str) {
+  const bytes = new TextEncoder().encode(str.slice(0, 31));
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return '0x' + hex.padEnd(64, '0');
+}
+
+function decodeBytes32(hex) {
+  const bytes = hex.slice(2).match(/.{2}/g).map(b => parseInt(b, 16));
+  const nullIdx = bytes.indexOf(0);
+  const trimmed = nullIdx === -1 ? bytes : bytes.slice(0, nullIdx);
+  return new TextDecoder().decode(new Uint8Array(trimmed));
+}
+
+function fmtCountdown(secs) {
+  if (secs <= 0) return '<span class="countdown-expired">EXPIRED</span>';
+  const d = Math.floor(secs / 86400);
+  const h = Math.floor((secs % 86400) / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  if (d > 0) return d + 'd ' + h + 'h ' + m + 'm';
+  return h + 'h ' + m + 'm ' + s + 's';
+}
+
+const STATUS = ['None', 'Active', 'Released', 'Closed'];
+
+function explorerTx(hash) {
+  return CHAIN.explorer + '/tx/' + hash;
+}
+
+function txLink(hash) {
+  if (!hash) return '';
+  return '<a class="tx-link" href="' + explorerTx(hash) + '" target="_blank" rel="noopener">View on explorer ↗</a>';
+}
+
+function setStatus(msg, type = 'pending') {
+  const el = document.getElementById('status-bar');
+  el.className = 'show ' + type;
+  el.innerHTML = msg;
+}
+
+function clearStatus() {
+  const el = document.getElementById('status-bar');
+  el.className = '';
+  el.innerHTML = '';
+}
+
+// ── Chain switching ───────────────────────────────────────────────────────────
+async function ensureChain() {
+  if (!window.ethereum) throw new Error('No wallet found');
+  const chainIdHex = '0x' + CHAIN.chainId.toString(16);
+  try {
+    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: chainIdHex }] });
+  } catch (err) {
+    if (err.code === 4902) {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: chainIdHex,
+          chainName: CHAIN.name,
+          rpcUrls: [CHAIN.rpc],
+          nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+          blockExplorerUrls: [CHAIN.explorer],
+        }]
+      });
+    } else throw err;
+  }
+}
+
+// ── Wallet connection ─────────────────────────────────────────────────────────
+async function connectWallet() {
+  if (!window.ethereum) { alert('No wallet found. Install MetaMask or a compatible wallet.'); return; }
+  try {
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    await ensureChain();
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
+    userAddress = await signer.getAddress();
+
+    if (!AFTERLIFE_ADDRESS) {
+      document.getElementById('not-deployed-warn').style.display = 'block';
+    } else {
+      afterlife = new ethers.Contract(AFTERLIFE_ADDRESS, AFTERLIFE_ABI, signer);
+      usdc = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, signer);
+    }
+
+    document.getElementById('connect-btn').style.display = 'none';
+    document.getElementById('disconnect-btn').style.display = '';
+    document.getElementById('wallet-address').textContent = shortAddr(userAddress);
+    document.getElementById('chain-label').textContent = CHAIN.name;
+    document.getElementById('connect-hero').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+
+    await switchTab('my-vaults');
+  } catch (err) {
+    alert('Connection failed: ' + (err.message || err));
+  }
+}
+
+function disconnect() {
+  provider = null; signer = null; userAddress = null; afterlife = null; usdc = null;
+  document.getElementById('connect-btn').style.display = '';
+  document.getElementById('disconnect-btn').style.display = 'none';
+  document.getElementById('wallet-address').textContent = '';
+  document.getElementById('chain-label').textContent = 'Not connected';
+  document.getElementById('connect-hero').style.display = 'block';
+  document.getElementById('app-content').style.display = 'none';
+  document.getElementById('not-deployed-warn').style.display = 'none';
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+async function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('[id^="panel-"]').forEach(p => p.style.display = 'none');
+  document.getElementById('panel-' + tab).style.display = '';
+  clearStatus();
+  countdownIntervals.forEach(clearInterval);
+  countdownIntervals = [];
+
+  if (!afterlife) return;
+  if (tab === 'my-vaults') await loadOwnerVaults();
+  if (tab === 'inheritances') await loadInheritances();
+}
+
+// ── Vault rendering ───────────────────────────────────────────────────────────
+async function loadOwnerVaults() {
+  const el = document.getElementById('my-vaults-list');
+  el.innerHTML = '<p class="text-muted text-xs" style="padding:8px">Loading…</p>';
+  try {
+    const ids = await afterlife.vaultsOfOwner(userAddress);
+    if (ids.length === 0) {
+      el.innerHTML = '<p class="text-muted text-xs" style="padding:8px;text-align:center">You have no vaults. Create one above.</p>';
+      return;
+    }
+    el.innerHTML = '';
+    for (const id of ids) {
+      const card = document.createElement('div');
+      card.style.marginBottom = '12px';
+      el.appendChild(card);
+      await renderVaultCard(card, id);
+    }
+  } catch (err) {
+    el.innerHTML = '<p class="text-danger text-xs" style="padding:8px">Error: ' + (err.message || err) + '</p>';
+  }
+}
+
+async function loadInheritances() {
+  const el = document.getElementById('inheritances-list');
+  el.innerHTML = '<p class="text-muted text-xs" style="padding:8px">Loading…</p>';
+  try {
+    const ids = await afterlife.vaultsOfBeneficiary(userAddress);
+    if (ids.length === 0) {
+      el.innerHTML = '<p class="text-muted text-xs" style="padding:8px;text-align:center">You are not listed as a beneficiary in any vault.</p>';
+      return;
+    }
+    el.innerHTML = '';
+    for (const id of ids) {
+      const card = document.createElement('div');
+      card.style.marginBottom = '12px';
+      el.appendChild(card);
+      await renderVaultCard(card, id);
+    }
+  } catch (err) {
+    el.innerHTML = '<p class="text-danger text-xs" style="padding:8px">Error: ' + (err.message || err) + '</p>';
+  }
+}
+
+async function lookupVault() {
+  const idVal = document.getElementById('lookup-id-input').value;
+  if (idVal === '') return;
+  const el = document.getElementById('lookup-result');
+  el.innerHTML = '';
+  const card = document.createElement('div');
+  el.appendChild(card);
+  await renderVaultCard(card, BigInt(idVal));
+}
+
+async function renderVaultCard(container, id) {
+  try {
+    const v = await afterlife.getVault(id);
+    const [owner, nameHex, window_, lastCheckIn, balance, releasedBalance, statusNum, benefAddrs, benefShares] = v;
+    const name = decodeBytes32(nameHex) || ('Vault #' + id.toString());
+    const status = Number(statusNum);
+    const statusLabel = STATUS[status] || 'Unknown';
+    const deadline = Number(lastCheckIn) + Number(window_);
+    const isOwner = owner.toLowerCase() === userAddress.toLowerCase();
+    const isBenef = benefAddrs.some(a => a.toLowerCase() === userAddress.toLowerCase());
+
+    const cardId = 'vault-' + id.toString();
+    container.innerHTML = `
+      <div class="card" id="${cardId}">
+        <div class="row-between" style="margin-bottom:12px">
+          <div>
+            <span class="display" style="font-size:15px;font-weight:700">${escHtml(name)}</span>
+            <span class="mono text-subtle" style="font-size:11px;margin-left:8px">#${id}</span>
+          </div>
+          <span class="status-badge status-${statusLabel}">${statusLabel}</span>
+        </div>
+        <div class="stat-grid" style="margin-bottom:12px">
+          <div class="stat-box">
+            <div class="stat-label">Balance</div>
+            <div class="stat-value display tabular">${formatUsdc(balance)} <span style="font-size:13px;color:var(--subtle);font-weight:500">USDC</span></div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Countdown</div>
+            <div class="stat-value display tabular" id="countdown-${id}">…</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div class="section-title">Beneficiaries</div>
+          ${benefAddrs.map((addr, i) => `
+            <div class="row-between" style="margin-bottom:4px">
+              <span class="mono text-xs">${shortAddr(addr)}</span>
+              <span class="tabular text-xs text-muted">${(Number(benefShares[i]) / 100).toFixed(2)}%</span>
+            </div>
+          `).join('')}
+        </div>
+        <div id="vault-actions-${id}"></div>
+      </div>
+    `;
+
+    // Live countdown
+    function updateCountdown() {
+      const el = document.getElementById('countdown-' + id);
+      if (!el) return;
+      const now = Math.floor(Date.now() / 1000);
+      const rem = deadline - now;
+      if (status === 1) el.innerHTML = fmtCountdown(rem);
+      else el.textContent = statusLabel;
+    }
+    updateCountdown();
+    if (status === 1) {
+      const iv = setInterval(updateCountdown, 1000);
+      countdownIntervals.push(iv);
+    }
+
+    // Actions
+    const actEl = document.getElementById('vault-actions-' + id);
+    const now = Math.floor(Date.now() / 1000);
+    const expired = now > deadline;
+
+    let actHtml = '<hr class="divider" />';
+
+    if (isOwner && status === 1) {
+      actHtml += `<div class="section-title">Owner Actions</div>
+        <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          <button class="btn btn-primary" onclick="doCheckIn(${id})">I'm Alive</button>
+        </div>
+        <div style="margin-bottom:8px">
+          <label class="lbl">Deposit USDC</label>
+          <div class="row">
+            <input type="number" id="dep-amt-${id}" placeholder="Amount" min="0" step="0.000001" style="flex:1" />
+            <button class="btn btn-primary" onclick="doDeposit(${id})">Deposit</button>
+          </div>
+        </div>
+        <div style="margin-bottom:8px">
+          <label class="lbl">Withdraw USDC</label>
+          <div class="row">
+            <input type="number" id="wd-amt-${id}" placeholder="Amount" min="0" step="0.000001" style="flex:1" />
+            <button class="btn btn-primary" onclick="doWithdraw(${id})">Withdraw</button>
+          </div>
+        </div>
+        <button class="btn btn-danger" onclick="doClose(${id})" style="width:100%;margin-top:4px">Close Vault &amp; Refund</button>`;
+    }
+
+    if (status === 1 && expired) {
+      actHtml += `<div class="warn" style="margin-bottom:8px;margin-top:8px">Vault has expired — anyone can release it now.</div>
+        <button class="btn btn-primary" onclick="doRelease(${id})" style="width:100%">Release Vault</button>`;
+    }
+
+    if (status === 2) {
+      actHtml += `<div class="warn" style="margin-bottom:8px;margin-top:8px">Released — ${formatUsdc(releasedBalance)} USDC to distribute.</div>`;
+      if (isBenef) {
+        benefAddrs.forEach((addr, i) => {
+          if (addr.toLowerCase() === userAddress.toLowerCase()) {
+            actHtml += `<button class="btn btn-primary" onclick="doClaim(${id}, ${i})" style="width:100%;margin-bottom:6px">Claim My Share (#${i})</button>`;
+          }
+        });
+      }
+      actHtml += `<button class="btn btn-primary" onclick="doClaimAll(${id})" style="width:100%;background:var(--accent-hover)">Pay Everyone (claimAll)</button>`;
+    }
+
+    actEl.innerHTML = actHtml;
+  } catch (err) {
+    container.innerHTML = `<div class="card"><p class="text-danger text-xs">Error loading vault #${id}: ${escHtml(err.message || String(err))}</p></div>`;
+  }
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Tx helpers ────────────────────────────────────────────────────────────────
+async function sendTx(fn, label) {
+  try {
+    setStatus(label + ' — waiting for wallet…', 'pending');
+    const tx = await fn();
+    setStatus(label + ' — confirming…' + txLink(tx.hash), 'pending');
+    await tx.wait();
+    setStatus(label + ' confirmed! ' + txLink(tx.hash), 'success');
+    return tx;
+  } catch (err) {
+    const msg = err?.reason || err?.message || String(err);
+    setStatus('Error: ' + escHtml(msg), 'error');
+    throw err;
+  }
+}
+
+async function doCheckIn(id) {
+  await ensureChain();
+  await sendTx(() => afterlife.checkIn(id), "Check-in");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doDeposit(id) {
+  await ensureChain();
+  const amt = document.getElementById('dep-amt-' + id).value;
+  if (!amt) return;
+  const raw = parseUsdc(amt);
+  await sendTx(() => usdc.approve(AFTERLIFE_ADDRESS, raw), "Approve USDC");
+  await sendTx(() => afterlife.deposit(id, raw), "Deposit");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doWithdraw(id) {
+  await ensureChain();
+  const amt = document.getElementById('wd-amt-' + id).value;
+  if (!amt) return;
+  const raw = parseUsdc(amt);
+  await sendTx(() => afterlife.withdraw(id, raw), "Withdraw");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doClose(id) {
+  if (!confirm('Close this vault and refund all USDC to yourself? This is permanent.')) return;
+  await ensureChain();
+  await sendTx(() => afterlife.close(id), "Close vault");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doRelease(id) {
+  await ensureChain();
+  await sendTx(() => afterlife.release(id), "Release vault");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doClaim(id, index) {
+  await ensureChain();
+  await sendTx(() => afterlife.claim(id, index), "Claim");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+async function doClaimAll(id) {
+  await ensureChain();
+  await sendTx(() => afterlife.claimAll(id), "Pay everyone");
+  await switchTab(document.querySelector('.tab-btn.active').dataset.tab);
+}
+
+// ── Create Vault ──────────────────────────────────────────────────────────────
+(function initCreateForm() {
+  addBeneficiary();
+})();
+
+function addBeneficiary() {
+  const container = document.getElementById('cv-beneficiaries');
+  const row = document.createElement('div');
+  row.className = 'beneficiary-row';
+  row.innerHTML = `
+    <input type="text" class="addr" placeholder="0x address" oninput="updateSharesTotal()" />
+    <input type="number" class="share" placeholder="bp" min="1" max="10000" oninput="updateSharesTotal()" />
+    <button class="btn btn-danger" style="padding:6px 10px;font-size:14px" onclick="removeBeneficiaryRow(this)">×</button>
+  `;
+  container.appendChild(row);
+  updateSharesTotal();
+}
+
+function removeBeneficiaryRow(btn) {
+  btn.parentElement.remove();
+  updateSharesTotal();
+}
+
+function updateSharesTotal() {
+  const rows = document.querySelectorAll('#cv-beneficiaries .beneficiary-row');
+  let total = 0;
+  rows.forEach(r => { total += parseInt(r.querySelector('.share').value) || 0; });
+  const el = document.getElementById('cv-shares-total');
+  el.textContent = total + ' / 10000 bp';
+  el.style.color = total === 10000 ? 'var(--success)' : 'var(--danger)';
+}
+
+async function createVault() {
+  if (!afterlife) { alert('Contract not deployed'); return; }
+  await ensureChain();
+
+  const name = document.getElementById('cv-name').value.trim();
+  if (!name) { alert('Enter a vault name'); return; }
+  const windowDays = parseFloat(document.getElementById('cv-window').value) || 0;
+  if (windowDays < 1 || windowDays > 3650) { alert('Window must be 1–3650 days'); return; }
+  const depositStr = document.getElementById('cv-deposit').value;
+  const depositAmt = depositStr ? parseUsdc(depositStr) : 0n;
+
+  const rows = document.querySelectorAll('#cv-beneficiaries .beneficiary-row');
+  const addrs = [], shares = [];
+  let totalBp = 0;
+  for (const row of rows) {
+    const addr = row.querySelector('.addr').value.trim();
+    const share = parseInt(row.querySelector('.share').value) || 0;
+    if (!addr || !ethers.isAddress(addr)) { alert('Invalid beneficiary address: ' + addr); return; }
+    if (share <= 0) { alert('Share must be > 0'); return; }
+    addrs.push(addr);
+    shares.push(share);
+    totalBp += share;
+  }
+  if (totalBp !== 10000) { alert('Shares must total exactly 10000 bp'); return; }
+
+  const nameBytes = encodeBytes32(name);
+  const windowSecs = BigInt(Math.round(windowDays * 86400));
+
+  try {
+    if (depositAmt > 0n) {
+      await sendTx(() => usdc.approve(AFTERLIFE_ADDRESS, depositAmt), "Approve USDC");
+    }
+    const tx = await sendTx(
+      () => afterlife.createVault(nameBytes, addrs, shares, windowSecs, depositAmt),
+      "Create vault"
+    );
+    // Reset form
+    document.getElementById('cv-name').value = '';
+    document.getElementById('cv-window').value = '365';
+    document.getElementById('cv-deposit').value = '';
+    document.getElementById('cv-beneficiaries').innerHTML = '';
+    addBeneficiary();
+    await switchTab('my-vaults');
+  } catch (e) { /* shown in status bar */ }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', () => location.reload());
+  window.ethereum.on('chainChanged', () => location.reload());
+}
+</script>
+</body>
+</html>

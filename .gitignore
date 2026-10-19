@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.vite/
+
+# Foundry build cache and artifacts
+contracts/out/
+contracts/cache/
+contracts/test-helpers/
+
+# Environment — never commit secrets
+.env
+.env.local
+.env*.local
+
+# Circle recovery files
+.circle/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+/tmp/
