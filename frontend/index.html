@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Afterlife — a USDC dead-man's switch on Arc</title>
+<style>
+  :root{--bg:#0b0d12;--card:#141824;--line:#232a3d;--txt:#e8ecf5;--mut:#8b94ad;--acc:#7c9cff;--ok:#38d39f;--warn:#ffb454;--bad:#ff6b6b}
+  *{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1a2140 0,var(--bg) 60%);color:var(--txt);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  h1{margin:0;font-size:22px;letter-spacing:.5px}h1 small{display:block;font-size:12px;color:var(--mut);font-weight:400;letter-spacing:0}
+  main{max-width:1000px;margin:0 auto;padding:24px;display:grid;gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  h2{margin:0 0 12px;font-size:16px}h3{margin:0;font-size:15px}
+  label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
+  input,select,button{font:inherit;color:var(--txt)}
+  input,select{background:#0e121c;border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+  button{background:var(--acc);color:#0b0d12;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}button.warn{background:var(--warn)}button.ok{background:var(--ok)}button.bad{background:var(--bad)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row>button{flex:0 0 auto}
+  .ben{display:grid;grid-template-columns:1fr 110px 34px;gap:8px;margin-bottom:6px}
+  .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;border:1px solid var(--line);color:var(--mut)}
+  .pill.Active{color:var(--ok);border-color:var(--ok)}.pill.Released{color:var(--warn);border-color:var(--warn)}.pill.Closed{color:var(--mut)}
+  .vault{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px;background:#10141f}
+  .vault .top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+  .bar{height:8px;background:#0e121c;border-radius:99px;overflow:hidden;margin:10px 0}.bar>i{display:block;height:100%;background:var(--ok)}
+  .bar.low>i{background:var(--warn)}.bar.dead>i{background:var(--bad)}
+  .mut{color:var(--mut)}.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  #log a{color:var(--acc)}#log div{padding:3px 0;border-bottom:1px dashed var(--line)}
+  #toast{position:fixed;right:20px;bottom:20px;max-width:380px;background:#1b2132;border:1px solid var(--line);padding:12px 14px;border-radius:10px;display:none}
+  #toast.err{border-color:var(--bad)}#toast.ok{border-color:var(--ok)}
+  .banner{background:#2a2110;border:1px solid var(--warn);color:var(--warn);padding:10px 14px;border-radius:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Afterlife <small>A USDC dead-man's switch on Arc · check in or your people inherit</small></h1>
+  <div class="row" style="flex:0 1 auto">
+    <span id="net" class="pill">not connected</span>
+    <span id="bal" class="pill mono"></span>
+    <button id="connect">Connect wallet</button>
+  </div>
+</header>
+<main>
+  <div id="cfgwarn" class="banner" style="display:none"></div>
+
+  <section class="card" id="create">
+    <h2>1 · Create a vault</h2>
+    <div class="grid2">
+      <div>
+        <label>Vault name</label><input id="vname" maxlength="64" placeholder="e.g. Family fund" />
+        <label>Inactivity window (if I don't check in for…)</label>
+        <div class="row"><input id="wamt" type="number" min="1" value="2" /><select id="wunit"><option>minutes</option><option>hours</option><option>days</option></select></div>
+        <div class="mut" id="winfo" style="font-size:12px;margin-top:4px"></div>
+        <label>Initial deposit (USDC) — use a tiny amount for the demo</label><input id="vamt" placeholder="1.00" value="1" />
+      </div>
+      <div>
+        <label>Beneficiaries (address · share %) — must add up to 100</label>
+        <div id="bens"></div>
+        <button class="ghost" id="addben" type="button">+ add beneficiary</button>
+        <span id="pct" class="mut" style="margin-left:8px;font-size:12px"></span>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px"><button id="mkvault">Approve USDC &amp; create vault</button><span class="mut" id="mkhint" style="flex:1"></span></div>
+  </section>
+
+  <section class="card"><h2>2 · My vaults <span class="mut" style="font-weight:400">(I'm the owner — press “I'm alive” to keep the funds)</span></h2><div id="owned" class="mut">Connect a wallet.</div></section>
+  <section class="card"><h2>3 · Inheritances <span class="mut" style="font-weight:400">(I'm a beneficiary)</span></h2><div id="inherited" class="mut">Connect a wallet.</div></section>
+
+  <section class="card">
+    <h2>Open any vault by ID <span class="mut" style="font-weight:400">(anyone can release an expired vault or pay out the beneficiaries)</span></h2>
+    <div class="row"><input id="lookid" type="number" min="1" placeholder="vault id" style="max-width:160px;flex:0 0 160px" /><button id="look" class="ghost">Open</button></div>
+    <div id="lookres"></div>
+  </section>
+
+  <section class="card"><h2>Transactions</h2><div id="log" class="mono mut">No transactions yet.</div></section>
+  <p class="mut" style="font-size:12px">Demo software, not audited — use tiny amounts. Contract: <span id="caddr" class="mono"></span></p>
+</main>
+<div id="toast"></div>
+<script src="vendor/ethers.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
