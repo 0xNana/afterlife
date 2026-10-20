@@ -20,7 +20,7 @@ import {
 export default function InheritancesPage() {
   const { address, isConnected } = useAccount()
   const { data: vaultIds, isLoading } = useBeneficiaryVaults(address)
-  const { data: vaults } = useVaults(vaultIds ?? [])
+  const { data: vaults } = useVaults([...(vaultIds ?? [])])
 
   if (!isConnected) {
     return (

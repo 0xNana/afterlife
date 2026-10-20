@@ -149,7 +149,7 @@ export default function CreatePage() {
             onChange={(e) => setName(e.target.value.slice(0, 32))}
             placeholder="e.g. Family Fund"
             className="w-full rounded-xl border px-3 py-2.5 text-sm outline-none transition-colors focus:ring-2"
-            style={{ borderColor: 'var(--border)', background: 'var(--surface-muted)', color: 'var(--ink)', focusRingColor: 'var(--focus)' }}
+            style={{ borderColor: 'var(--border)', background: 'var(--surface-muted)', color: 'var(--ink)' }}
           />
           <p className="text-xs" style={{ color: 'var(--subtle)' }}>{name.length}/32 chars</p>
         </div>

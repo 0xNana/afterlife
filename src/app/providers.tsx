@@ -13,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider
-          theme="default"
+          theme="auto"
           customTheme={{
             '--ck-font-family': "'DM Sans', sans-serif",
             '--ck-primary-button-background': '#122d45',
