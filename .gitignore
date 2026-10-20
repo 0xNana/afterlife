@@ -1,33 +1,47 @@
-# Dependencies
+# ---- Dependencies ----
 node_modules/
+.pnp
+.pnp.js
 
-# Build outputs
+# ---- Next.js ----
+.next/
+out/
+
+# ---- Build outputs (legacy Vite) ----
 dist/
 .vite/
 
-# Foundry build cache and artifacts
+# ---- Foundry artifacts (re-generable) ----
 contracts/out/
 contracts/cache/
 contracts/test-helpers/
 
-# Environment — never commit secrets
+# ---- Environment — never commit secrets ----
 .env
 .env.local
 .env*.local
 
-# Circle recovery files
+# ---- Circle recovery files ----
 .circle/
 
-# OS
+# ---- TypeScript ----
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- OS ----
 .DS_Store
 Thumbs.db
 
-# Editor
+# ---- Editor ----
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Logs
+# ---- Logs ----
 *.log
 /tmp/
+
+# ---- Debug / test artefacts ----
+console.jsonl
+traces.jsonl
