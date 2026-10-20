@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Background pill -->
+  <rect width="120" height="120" rx="28" fill="#122d45"/>
+  <!-- Outer shield -->
+  <path d="M60 18L26 30v24c0 19.4 14.5 37.6 34 43 19.5-5.4 34-23.6 34-43V30L60 18z" fill="#1a3d5c"/>
+  <!-- Inner shield highlight -->
+  <path d="M60 24L30 35v19c0 16.2 12.2 31.4 30 36.8 17.8-5.4 30-20.6 30-36.8V35L60 24z" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <!-- Heart cutout / inheritance symbol -->
+  <path d="M52.5 49c-3.3-3.3-8.7-3.3-12 0-3.3 3.3-3.3 8.7 0 12L60 70.5 79.5 61c3.3-3.3 3.3-8.7 0-12-3.3-3.3-8.7-3.3-12 0L60 56.5 52.5 49z" fill="white" opacity="0.92"/>
+</svg>

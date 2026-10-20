@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Shield, Clock, Users, ArrowRight, Lock, Coins, Eye, Bell } from 'lucide-react'
+import Image from 'next/image'
+import { Clock, Users, ArrowRight, Lock, Coins, Eye, Bell, Shield } from 'lucide-react'
 
 // ─── Primitives ────────────────────────────────────────────────────────────
 
@@ -56,9 +57,7 @@ export default function LandingPage() {
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-xl" style={{ background: 'var(--accent)' }}>
-              <Shield className="size-4 text-white" />
-            </div>
+            <Image src="/logo.svg" alt="Afterlife" width={32} height={32} className="rounded-xl" />
             <span className="display text-base font-bold" style={{ color: 'var(--ink)' }}>Afterlife</span>
           </div>
           <div className="flex items-center gap-3">

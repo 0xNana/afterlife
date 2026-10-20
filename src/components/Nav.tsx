@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ConnectKitButton } from 'connectkit'
-import { Shield } from 'lucide-react'
+import Image from 'next/image'
 import { clsx } from 'clsx'
 
 const links = [
@@ -28,12 +28,7 @@ export function Nav() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
         {/* Logo — always back to landing */}
         <Link href="/" className="flex items-center gap-2">
-          <div
-            className="flex size-8 items-center justify-center rounded-xl"
-            style={{ background: 'var(--accent)' }}
-          >
-            <Shield className="size-4 text-white" />
-          </div>
+          <Image src="/logo.svg" alt="Afterlife" width={32} height={32} className="rounded-xl" />
           <span className="display text-base font-bold" style={{ color: 'var(--ink)' }}>
             Afterlife
           </span>

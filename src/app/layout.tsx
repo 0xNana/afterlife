@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://afterlife-gamma.vercel.app',
     siteName: 'Afterlife',
+    images: [{ url: '/icon-512.png', width: 512, height: 512, alt: 'Afterlife logo' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -20,6 +21,16 @@ export const metadata: Metadata = {
     description:
       'A simple on-chain vault for your USDC. Name the people who should receive it and check in from time to time. If you ever stop, it goes to them in the shares you chose, without a middleman.',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+  manifest: '/site.webmanifest',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

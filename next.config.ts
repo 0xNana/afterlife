@@ -26,6 +26,15 @@ const x402Stubs = [
 ]
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    const backendPort = process.env.NOTIFICATION_SERVER_PORT ?? '3001'
+    return [
+      {
+        source: '/api/:path*',
+        destination: `http://localhost:${backendPort}/:path*`,
+      },
+    ]
+  },
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

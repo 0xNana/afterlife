@@ -13,6 +13,7 @@ import { Btn } from '@/components/Btn'
 import { Sheet } from '@/components/Sheet'
 import { useVault, useVaultDeadline, useUsdcBalance, useUsdcAllowance } from '@/hooks/useVault'
 import { useChainGuard } from '@/hooks/useChainGuard'
+import { EmailRegistration } from '@/components/EmailRegistration'
 import {
   AFTERLIFE_ADDRESS, AFTERLIFE_ABI, ERC20_ABI, USDC_ADDRESS,
   VaultStatus, parseUsdc, formatUsdc, formatDuration,
@@ -215,6 +216,12 @@ export default function VaultPage({ params }: { params: Promise<{ id: string }> 
                   {address?.toLowerCase() === addr.toLowerCase() && (
                     <span className="text-xs" style={{ color: 'var(--accent-hover)' }}>You</span>
                   )}
+                  <EmailRegistration
+                    vaultId={id.toString()}
+                    address={addr}
+                    role="beneficiary"
+                    label="Get notified when released"
+                  />
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold tabular-nums" style={{ color: 'var(--ink)' }}>{(share / 100).toFixed(1)}%</p>
@@ -244,6 +251,22 @@ export default function VaultPage({ params }: { params: Promise<{ id: string }> 
           </div>
         )}
       </Card>
+
+      {/* Owner deadline notifications */}
+      {isOwner && isActive && (
+        <Card className="p-5 space-y-3">
+          <h2 className="display text-sm font-bold" style={{ color: 'var(--ink)' }}>Check-in reminders</h2>
+          <p className="text-xs" style={{ color: 'var(--muted)' }}>
+            Get an email reminder 24 h and 4 h before your vault expires.
+          </p>
+          <EmailRegistration
+            vaultId={id.toString()}
+            address={owner as string}
+            role="owner"
+            label="Reminder email"
+          />
+        </Card>
+      )}
 
       {/* Deposit sheet */}
       <Sheet open={depositSheet} onClose={() => setDepositSheet(false)} title="Add USDC" spectral>

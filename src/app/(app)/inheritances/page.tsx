@@ -10,6 +10,7 @@ import { StatusBadge } from '@/components/StatusBadge'
 import { Countdown } from '@/components/Countdown'
 import { Btn } from '@/components/Btn'
 import { TxButton } from '@/components/TxButton'
+import { EmailRegistration } from '@/components/EmailRegistration'
 import { useBeneficiaryVaults, useVaults, useVaultDeadline } from '@/hooks/useVault'
 import { useChainGuard } from '@/hooks/useChainGuard'
 import {
@@ -135,6 +136,14 @@ function InheritanceCard({
           )}
         </div>
       </div>
+
+      {/* Email notification */}
+      <EmailRegistration
+        vaultId={id.toString()}
+        address={userAddress}
+        role="beneficiary"
+        label="Get notified when released"
+      />
 
       {/* Countdown */}
       {isActive && deadlineTs && (
