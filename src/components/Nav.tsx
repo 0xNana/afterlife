@@ -7,7 +7,7 @@ import { Shield } from 'lucide-react'
 import { clsx } from 'clsx'
 
 const links = [
-  { href: '/', label: 'My Vaults' },
+  { href: '/dashboard', label: 'My Vaults' },
   { href: '/create', label: 'Create' },
   { href: '/inheritances', label: 'Inheritances' },
   { href: '/explore', label: 'Explore' },
@@ -26,7 +26,7 @@ export function Nav() {
       }}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-        {/* Logo */}
+        {/* Logo — always back to landing */}
         <Link href="/" className="flex items-center gap-2">
           <div
             className="flex size-8 items-center justify-center rounded-xl"
@@ -47,9 +47,7 @@ export function Nav() {
               href={l.href}
               className={clsx(
                 'rounded-xl px-3 py-1.5 text-sm font-medium transition-colors',
-                path === l.href
-                  ? 'text-white'
-                  : 'hover:bg-black/5'
+                path === l.href ? 'text-white' : 'hover:bg-black/5'
               )}
               style={
                 path === l.href
