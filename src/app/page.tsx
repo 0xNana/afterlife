@@ -95,25 +95,6 @@ export default function LandingPage() {
       <section className="relative z-10 px-6 pb-28 pt-28 text-center" style={{ maxWidth: '100%' }}>
         <div className="mx-auto" style={{ maxWidth: '44rem' }}>
 
-          {/* Eyebrow */}
-          <p
-            style={{
-              fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              color: 'var(--muted)',
-              marginBottom: '2rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-            Runs on Arc · Currently on testnet
-          </p>
-
           <h1
             style={{
               fontFamily: 'Georgia, serif',
