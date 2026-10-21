@@ -107,7 +107,7 @@ export default function VaultPage({ params }: { params: Promise<{ id: string }> 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
       {/* Back */}
-      <Link href="/" className="inline-flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70" style={{ color: 'var(--muted)' }}>
+      <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm transition-opacity hover:opacity-70" style={{ color: 'var(--muted)' }}>
         <ArrowLeft className="size-4" /> My Vaults
       </Link>
 
@@ -149,7 +149,7 @@ export default function VaultPage({ params }: { params: Promise<{ id: string }> 
         {/* Countdown */}
         {isActive && deadlineTs && (
           <div className="mt-5 rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.46)', border: '1px solid rgba(255,255,255,0.56)' }}>
-            <Countdown deadline={Number(deadlineTs)} />
+            <Countdown deadline={Number(deadlineTs)} windowSecs={Number(window as bigint)} />
             <p className="mt-2 text-xs" style={{ color: 'var(--subtle)' }}>
               Window: {formatDuration(window as bigint)} · Last check-in: {new Date(Number(lastCheckIn as bigint) * 1000).toLocaleDateString()}
             </p>

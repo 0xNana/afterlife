@@ -1,126 +1,139 @@
 'use client'
 
-/**
- * EmailRegistration — lets a beneficiary (or owner) register/update their
- * email address so they receive notifications when the vault is released.
- *
- * Used in:
- *   - Vault Detail page (for beneficiaries viewing a vault they're named in)
- *   - Inheritances page (per-vault card)
- *
- * The component signs a short message with the connected wallet to prove
- * ownership of the address, then POSTs to /api/emails.
- */
-
 import { useState } from 'react'
-import { useAccount } from 'wagmi'
-import { Mail, CheckCircle, Loader2, X } from 'lucide-react'
+import { useSignMessage } from 'wagmi'
+import { Bell, BellOff, Check, Loader2, Mail } from 'lucide-react'
 import { toast } from 'sonner'
-import { useRegisterEmail, useVaultEmails } from '@/hooks/useEmails'
-import { Btn } from './Btn'
+import { Btn } from '@/components/Btn'
+import { useEmailForAddress } from '@/hooks/useEmails'
 
-interface Props {
+interface EmailRegistrationProps {
   vaultId: string
-  /** The address being registered (beneficiary OR owner for deadline warnings) */
   address: string
-  /** 'beneficiary' | 'owner' — determines which endpoint is called */
   role: 'beneficiary' | 'owner'
-  /** Optional label shown above the input */
   label?: string
 }
 
-export function EmailRegistration({ vaultId, address, role, label }: Props) {
-  const { address: connected } = useAccount()
-  const { emails, refetch } = useVaultEmails(vaultId)
-  const { registerEmail, registerOwnerEmail, loading, error } = useRegisterEmail()
-
-  const existing = emails.find((e) => e.beneficiary.toLowerCase() === address.toLowerCase())?.email
-  const [input, setInput] = useState('')
+export function EmailRegistration({ vaultId, address, role, label = 'Get notified' }: EmailRegistrationProps) {
   const [editing, setEditing] = useState(false)
+  const [inputEmail, setInputEmail] = useState('')
+  const { signMessage, isPending: isSigning } = useSignMessage()
+  const { email, isLoading, register, unregister } = useEmailForAddress(vaultId, address)
 
-  // Only let the connected address register their own email
-  const isMe = connected?.toLowerCase() === address.toLowerCase()
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEmail)
 
-  if (!isMe) return null
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!input.trim()) return
-    const ok = role === 'owner'
-      ? await registerOwnerEmail(vaultId, address, input.trim())
-      : await registerEmail(vaultId, address, input.trim())
-    if (ok) {
-      toast.success('Email registered — you\'ll receive notifications.')
-      setEditing(false)
-      setInput('')
-      refetch()
-    } else {
-      toast.error(error ?? 'Failed to register email')
-    }
+  async function handleRegister() {
+    if (!isValidEmail) return
+    const msg = `Afterlife: register ${inputEmail} for vault ${vaultId} (${role})`
+    signMessage(
+      { message: msg },
+      {
+        onSuccess: async (sig) => {
+          const ok = await register(inputEmail, sig, msg)
+          if (ok) {
+            toast.success('Email registered — you\'ll be notified when the vault releases.')
+            setEditing(false)
+            setInputEmail('')
+          } else {
+            toast.error('Failed to register email. Try again.')
+          }
+        },
+        onError: () => toast.error('Signature cancelled.'),
+      },
+    )
   }
 
-  if (existing && !editing) {
+  async function handleUnregister() {
+    const msg = `Afterlife: unregister email for vault ${vaultId} (${role})`
+    signMessage(
+      { message: msg },
+      {
+        onSuccess: async (sig) => {
+          const ok = await unregister(sig, msg)
+          if (ok) toast.success('Email removed.')
+          else toast.error('Failed to remove email.')
+        },
+        onError: () => toast.error('Signature cancelled.'),
+      },
+    )
+  }
+
+  if (isLoading) return null
+
+  // Already registered
+  if (email && !editing) {
     return (
-      <div className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ background: 'rgba(26,128,71,0.07)', border: '1px solid rgba(26,128,71,0.15)' }}>
-        <CheckCircle className="size-3.5 shrink-0" style={{ color: 'var(--success)' }} />
-        <span className="flex-1 text-xs" style={{ color: 'var(--success)' }}>
-          {label ?? 'Notifications'}: <strong>{existing}</strong>
+      <div className="mt-1.5 flex items-center gap-2">
+        <span
+          className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+          style={{ background: 'var(--success-bg)', color: 'var(--success)' }}
+        >
+          <Check className="size-3" />
+          {email}
         </span>
         <button
-          onClick={() => { setInput(existing); setEditing(true) }}
-          className="text-xs underline opacity-60 hover:opacity-100"
-          style={{ color: 'var(--muted)' }}
+          onClick={handleUnregister}
+          className="flex items-center gap-1 text-xs transition-opacity hover:opacity-70"
+          style={{ color: 'var(--subtle)' }}
+          title="Remove email"
         >
-          Edit
+          <BellOff className="size-3" />
         </button>
       </div>
     )
   }
 
-  if (!editing) {
+  // Editing / adding
+  if (editing) {
     return (
-      <button
-        onClick={() => setEditing(true)}
-        className="flex items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-80"
-        style={{ color: 'var(--muted)' }}
-      >
-        <Mail className="size-3.5" />
-        {label ?? 'Add email for notifications'}
-      </button>
+      <div className="mt-2 flex items-center gap-2">
+        <div
+          className="flex flex-1 items-center gap-2 rounded-xl border px-3 py-2"
+          style={{
+            background: 'var(--surface-muted)',
+            borderColor: isValidEmail ? 'var(--success)' : 'var(--border)',
+          }}
+        >
+          <Mail className="size-3.5 shrink-0" style={{ color: 'var(--subtle)' }} />
+          <input
+            type="email"
+            value={inputEmail}
+            onChange={(e) => setInputEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
+            placeholder="your@email.com"
+            className="min-w-0 flex-1 bg-transparent text-xs outline-none"
+            style={{ color: 'var(--ink)' }}
+            autoFocus
+          />
+        </div>
+        <Btn
+          size="xs"
+          onClick={handleRegister}
+          disabled={!isValidEmail || isSigning}
+          loading={isSigning}
+        >
+          {isSigning ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
+        </Btn>
+        <Btn
+          size="xs"
+          variant="ghost"
+          onClick={() => { setEditing(false); setInputEmail('') }}
+        >
+          ✕
+        </Btn>
+      </div>
     )
   }
 
+  // Default: show "get notified" prompt
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <label className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>
-        {label ?? 'Email for notifications'}
-      </label>
-      <div className="flex items-center gap-2">
-        <input
-          type="email"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="you@example.com"
-          required
-          autoFocus
-          className="flex-1 rounded-xl border px-3 py-2 text-sm outline-none"
-          style={{ borderColor: 'var(--border)', background: 'var(--surface-muted)', color: 'var(--ink)' }}
-        />
-        <Btn type="submit" size="sm" disabled={loading || !input.trim()}>
-          {loading ? <Loader2 className="size-3.5 animate-spin" /> : 'Save'}
-        </Btn>
-        <button
-          type="button"
-          onClick={() => { setEditing(false); setInput('') }}
-          style={{ color: 'var(--muted)' }}
-        >
-          <X className="size-4" />
-        </button>
-      </div>
-      <p className="text-xs" style={{ color: 'var(--subtle)' }}>
-        You'll sign a message to prove you own this address. No private key is shared.
-      </p>
-      {error && <p className="text-xs" style={{ color: 'var(--danger)' }}>{error}</p>}
-    </form>
+    <button
+      onClick={() => setEditing(true)}
+      className="mt-1.5 flex items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-70"
+      style={{ color: 'var(--subtle)' }}
+    >
+      <Bell className="size-3" />
+      {label}
+    </button>
   )
 }

@@ -1,32 +1,29 @@
 'use client'
 
 import { clsx } from 'clsx'
+import type { CSSProperties, ReactNode } from 'react'
 
 interface CardProps {
-  children: React.ReactNode
+  children: ReactNode
   className?: string
   inner?: boolean
   spectralTop?: boolean
+  hover?: boolean
+  style?: CSSProperties
 }
 
-export function Card({ children, className, inner, spectralTop }: CardProps) {
-  const glass = inner
-    ? {
-        background: 'rgba(255,255,255,0.46)',
-        border: '1px solid rgba(255,255,255,0.56)',
-      }
-    : {
-        background: 'rgba(255,255,255,0.64)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.68)',
-        boxShadow: '0 8px 32px rgba(18,45,69,0.08), inset 0 1px 0 rgba(255,255,255,0.55)',
-      }
+export function Card({ children, className, inner, spectralTop, hover, style }: CardProps) {
+  const base = inner
+    ? 'glass-inner rounded-2xl'
+    : clsx(
+        'glass-card rounded-3xl overflow-hidden',
+        hover && 'transition-shadow duration-200 hover:shadow-[0_8px_32px_rgba(15,35,54,0.10)]',
+      )
 
   return (
-    <div className={clsx('rounded-3xl overflow-hidden', className)} style={glass}>
+    <div className={clsx(base, className)} style={style}>
       {spectralTop && (
-        <div className="h-1" style={{ background: 'linear-gradient(90deg, #5fbeff, #af8ff4, #f05c6b, #ffcd83, #7ef1b3)' }} />
+        <div className="h-[3px] w-full" style={{ background: 'var(--spectral)' }} />
       )}
       {children}
     </div>

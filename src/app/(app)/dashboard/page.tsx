@@ -3,7 +3,7 @@
 import { useAccount } from 'wagmi'
 import Link from 'next/link'
 import { ConnectKitButton } from 'connectkit'
-import { Plus, Shield } from 'lucide-react'
+import { Plus, Shield, ArrowRight } from 'lucide-react'
 import { Card } from '@/components/Card'
 import { VaultRow } from '@/components/VaultRow'
 import { Btn } from '@/components/Btn'
@@ -15,33 +15,33 @@ export default function DashboardPage() {
 
   if (!isConnected) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
+      <div className="flex flex-col items-center gap-8 py-20 text-center">
         <div
-          className="mb-6 flex size-14 items-center justify-center rounded-2xl"
+          className="flex size-16 items-center justify-center rounded-2xl"
           style={{ background: 'var(--accent)' }}
         >
-          <Shield className="size-7 text-white" />
+          <Shield className="size-8 text-white" />
         </div>
-        <h1 className="display text-2xl font-bold" style={{ color: 'var(--ink)' }}>
-          Connect your wallet
-        </h1>
-        <p className="mt-2 max-w-sm text-sm" style={{ color: 'var(--muted)' }}>
-          Connect to see your vaults and check-in status.
-        </p>
-        <div className="mt-6">
-          <ConnectKitButton />
+        <div className="space-y-2">
+          <h1 className="display text-2xl font-bold" style={{ color: 'var(--ink)' }}>Connect your wallet</h1>
+          <p className="text-sm" style={{ color: 'var(--muted)' }}>Connect to view and manage your vaults</p>
         </div>
+        <ConnectKitButton />
+        <Link href="/explore" className="flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--accent-hover)' }}>
+          Browse public vaults <ArrowRight className="size-4" />
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="display text-2xl font-bold" style={{ color: 'var(--ink)' }}>My Vaults</h1>
           <p className="mt-0.5 text-sm" style={{ color: 'var(--muted)' }}>
-            {vaultIds?.length ?? 0} vault{vaultIds?.length !== 1 ? 's' : ''} owned
+            {isLoading ? '—' : `${vaultIds?.length ?? 0} vault${vaultIds?.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         <Link href="/create">
@@ -51,18 +51,24 @@ export default function DashboardPage() {
         </Link>
       </div>
 
+      {/* Vault list */}
       {isLoading ? (
         <div className="space-y-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-3xl" style={{ background: 'rgba(18,45,69,0.06)' }} />
-          ))}
+          {[0, 1, 2].map((i) => <div key={i} className="skeleton h-28" />)}
         </div>
       ) : !vaultIds || vaultIds.length === 0 ? (
-        <Card className="p-10 text-center">
-          <Shield className="mx-auto mb-4 size-10 opacity-20" style={{ color: 'var(--ink)' }} />
+        <Card className="p-12 text-center">
+          <div
+            className="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl"
+            style={{ background: 'rgba(15,35,54,0.06)' }}
+          >
+            <Shield className="size-7 opacity-40" style={{ color: 'var(--ink)' }} />
+          </div>
           <p className="display text-base font-semibold" style={{ color: 'var(--ink)' }}>No vaults yet</p>
-          <p className="mt-1 text-sm" style={{ color: 'var(--muted)' }}>Create your first inheritance vault.</p>
-          <Link href="/create" className="mt-4 inline-block">
+          <p className="mx-auto mt-1.5 max-w-xs text-sm" style={{ color: 'var(--muted)' }}>
+            Create your first vault to start planning your digital inheritance.
+          </p>
+          <Link href="/create" className="mt-5 inline-block">
             <Btn><Plus className="size-4" /> Create Vault</Btn>
           </Link>
         </Card>

@@ -112,3 +112,43 @@ export function useRegisterEmail() {
 
   return { registerEmail, registerOwnerEmail, unregisterEmail, loading, error }
 }
+
+/**
+ * Convenience hook: manages the email state for a single address in a vault.
+ * Used by EmailRegistration component.
+ */
+export function useEmailForAddress(vaultId: string, address: string) {
+  const { emails, loading: isLoading, refetch } = useVaultEmails(vaultId)
+  const { registerEmail, registerOwnerEmail, unregisterEmail, loading: isMutating } = useRegisterEmail()
+
+  const entry = emails.find((e) => e.beneficiary.toLowerCase() === address.toLowerCase())
+  const email = entry?.email ?? null
+
+  async function register(emailValue: string, signature: string, message: string): Promise<boolean> {
+    // The EmailRegistration passes signature separately; we use registerEmail which re-signs.
+    // Instead, call the API directly here since we already have the sig.
+    try {
+      const res = await fetch(`${API}/emails`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vaultId, beneficiary: address, email: emailValue, signature, message }),
+      })
+      if (res.ok) { refetch(); return true }
+      return false
+    } catch { return false }
+  }
+
+  async function unregister(signature: string, message: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API}/emails`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vaultId, beneficiary: address, signature, message }),
+      })
+      if (res.ok) { refetch(); return true }
+      return false
+    } catch { return false }
+  }
+
+  return { email, isLoading: isLoading || isMutating, register, unregister }
+}
