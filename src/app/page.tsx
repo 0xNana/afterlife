@@ -1,392 +1,372 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { Clock, Users, ArrowRight, Lock, Coins, Eye, Bell, Shield } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
-// ─── Primitives ────────────────────────────────────────────────────────────
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <p
-      className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-widest"
-      style={{ borderColor: 'var(--border-strong)', color: 'var(--muted)' }}
-    >
-      {children}
-    </p>
-  )
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p
-      className="mb-3 text-xs font-semibold uppercase tracking-widest"
-      style={{ color: 'var(--muted)' }}
-    >
-      {children}
-    </p>
-  )
-}
-
-function Divider() {
-  return <hr style={{ borderColor: 'var(--border)', margin: '0 auto', maxWidth: '72rem' }} />
-}
-
-// ─── Landing Page ──────────────────────────────────────────────────────────
-
-export default function LandingPage() {
+// ─── Section primitives ────────────────────────────────────────────────────
+function Rule() {
   return (
     <div
-      className="relative min-h-dvh overflow-x-hidden"
-      style={{ background: 'var(--bg-gradient)', color: 'var(--ink)' }}
-    >
-      {/* Ambient blobs */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-        <div style={{ position: 'absolute', top: '0%', left: '-5%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(133,177,237,0.14) 0%, transparent 70%)', filter: 'blur(90px)' }} />
-        <div style={{ position: 'absolute', top: '45%', right: '-8%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,205,131,0.13) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-        <div style={{ position: 'absolute', bottom: '5%', left: '30%', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(126,241,179,0.10) 0%, transparent 70%)', filter: 'blur(75px)' }} />
-      </div>
+      aria-hidden
+      style={{
+        height: 1,
+        margin: '0 auto',
+        maxWidth: '48rem',
+        background: 'linear-gradient(90deg, transparent 0%, rgba(255,248,238,0.12) 30%, rgba(255,248,238,0.12) 70%, transparent 100%)',
+      }}
+    />
+  )
+}
 
-      {/* ── Minimal top nav ──────────────────────────────────── */}
-      <header
-        className="sticky top-0 z-40 border-b"
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <p style={{
+      fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+      fontSize: '0.68rem',
+      fontWeight: 600,
+      letterSpacing: '0.16em',
+      textTransform: 'uppercase',
+      color: 'var(--muted)',
+      marginBottom: '1.25rem',
+    }}>
+      {children}
+    </p>
+  )
+}
+
+// ─── Landing ───────────────────────────────────────────────────────────────
+export default function LandingPage() {
+  return (
+    <div className="relative min-h-dvh grain" style={{ background: 'var(--bg-gradient)', color: 'var(--ink)' }}>
+
+      {/* Warm top-right glow */}
+      <div
+        aria-hidden
         style={{
-          background: 'rgba(255,255,255,0.75)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-          borderColor: 'var(--border)',
+          position: 'fixed', top: '-10%', right: '-5%',
+          width: 600, height: 600, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(200,144,42,0.08) 0%, transparent 65%)',
+          filter: 'blur(120px)', pointerEvents: 'none', zIndex: 0,
+        }}
+      />
+
+      {/* ── Top nav ── */}
+      <header
+        className="sticky top-0 z-40"
+        style={{
+          background: 'rgba(14,12,10,0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255,248,238,0.07)',
         }}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Afterlife" width={32} height={32} className="rounded-xl" />
-            <span className="display text-base font-bold" style={{ color: 'var(--ink)' }}>Afterlife</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="rounded-2xl px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+        <div className="relative z-10 mx-auto flex max-w-4xl items-center justify-between px-6 py-3.5">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="flex size-7 items-center justify-center rounded-[8px]"
               style={{ background: 'var(--accent)' }}
             >
-              Launch app
-            </Link>
+              <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+                <path d="M6 0.5L11.5 3.5V7C11.5 10.0376 9.07614 12.7194 6 13.5C2.92386 12.7194 0.5 10.0376 0.5 7V3.5L6 0.5Z" fill="rgba(255,248,238,0.95)" />
+              </svg>
+            </div>
+            <span style={{ fontFamily: 'Georgia, serif', fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
+              Afterlife
+            </span>
           </div>
+          <Link
+            href="/dashboard"
+            className="transition-opacity hover:opacity-80"
+            style={{
+              fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+              fontSize: '0.82rem',
+              fontWeight: 500,
+              color: 'var(--accent)',
+              letterSpacing: '0.01em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
+          >
+            Launch app <ArrowRight style={{ width: 13, height: 13, display: 'inline' }} />
+          </Link>
         </div>
       </header>
 
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 pb-20 pt-24 text-center">
-        <div className="mx-auto max-w-3xl">
-          <Eyebrow>
-            <span
-              className="size-1.5 rounded-full"
-              style={{ display: 'inline-block', background: 'var(--success)' }}
-            />
-            Runs on Arc · Currently on testnet
-          </Eyebrow>
+      {/* ── Hero ── */}
+      <section className="relative z-10 px-6 pb-28 pt-28 text-center" style={{ maxWidth: '100%' }}>
+        <div className="mx-auto" style={{ maxWidth: '44rem' }}>
 
-          <h1
-            className="display text-balance text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl"
-            style={{ letterSpacing: '-0.04em', color: 'var(--ink)' }}
-          >
-            Your USDC,<br />in the right hands.<br />
-            <span style={{ color: 'var(--accent-hover)' }}>Even when you&rsquo;can&rsquo;t be there.</span>
-          </h1>
-
+          {/* Eyebrow */}
           <p
-            className="text-pretty mx-auto mt-6 max-w-xl text-lg leading-relaxed"
-            style={{ color: 'var(--muted)' }}
+            style={{
+              fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              color: 'var(--muted)',
+              marginBottom: '2rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
           >
-            Afterlife is a simple vault for your USDC. Choose who should receive it,
-            then check in every so often. If you ever stop, it passes to them in the
-            shares you set. No company sits in the middle, and no one holds a key to it.
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
+            Runs on Arc · Currently on testnet
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <h1
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 'clamp(2.6rem, 7vw, 4.5rem)',
+              fontWeight: 700,
+              lineHeight: 1.08,
+              letterSpacing: '-0.035em',
+              color: 'var(--ink)',
+              marginBottom: '1.75rem',
+              textWrap: 'balance',
+            }}
+          >
+            Your USDC,<br />
+            in the right hands.<br />
+            <span style={{ color: 'var(--accent)' }}>Even when you can&rsquo;t be there.</span>
+          </h1>
+
+          <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '1.05rem', lineHeight: 1.75, color: 'var(--ink-2)', maxWidth: '38ch', margin: '0 auto 2.5rem', textWrap: 'pretty' }}>
+            A vault for your USDC. Choose who should receive it,
+            then check in every so often. If you ever stop, it passes
+            to them in the shares you set — no middleman, no key.
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.875rem', justifyContent: 'center', alignItems: 'center' }}>
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 rounded-2xl px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 hover:shadow-xl"
-              style={{ background: 'var(--accent)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'var(--accent)',
+                color: '#0e0c0a',
+                fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                letterSpacing: '0.01em',
+                padding: '0.75rem 1.75rem',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                transition: 'filter 0.15s',
+              }}
+              className="hover:brightness-110"
             >
-              Launch app <ArrowRight className="size-4" />
+              Launch app <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>
             <a
               href="#how-it-works"
-              className="flex items-center gap-2 rounded-2xl border px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-black/5"
-              style={{ borderColor: 'var(--border-strong)', color: 'var(--ink-2)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: 500,
+                fontSize: '0.88rem',
+                color: 'var(--muted)',
+                textDecoration: 'none',
+                transition: 'color 0.15s',
+              }}
+              className="hover:text-[var(--ink-2)]"
             >
-              See how it works
+              See how it works ↓
             </a>
           </div>
 
-          <p className="mt-5 text-xs" style={{ color: 'var(--subtle)' }}>
-            Early software that hasn&apos;t been audited. Please start with small amounts.
+          <p style={{ marginTop: '1.75rem', fontSize: '0.72rem', color: 'var(--subtle)', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif' }}>
+            Early software — not yet audited. Please start with small amounts.
           </p>
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── The Problem ──────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-3xl">
-          <SectionLabel>The problem</SectionLabel>
-          <h2
-            className="display text-balance text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
-            Your money is safe with you.<br />That&apos;s the problem.
+      {/* ── The Problem ── */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '40rem' }}>
+          <Label>The problem</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '1.25rem', textWrap: 'balance' }}>
+            Your money is safe with you.<br />That&rsquo;s the problem.
           </h2>
-          <p
-            className="text-pretty mt-5 text-base leading-relaxed"
-            style={{ color: 'var(--ink-2)', maxWidth: '60ch' }}
-          >
-            Holding your own USDC means nobody can freeze it, lose it, or spend it for
-            you. But it also means nobody else can reach it. If you&apos;re gone, or simply
-            can&apos;t get to your wallet, those funds can sit untouched indefinitely — even
-            when the people you&apos;d want to have them are right there.
+          <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.95rem', lineHeight: 1.75, color: 'var(--ink-2)', marginBottom: '2.5rem', maxWidth: '56ch', textWrap: 'pretty' }}>
+            Holding your own USDC means nobody can freeze it or spend it for you.
+            But it also means nobody else can reach it. If you&rsquo;re gone, or simply
+            can&rsquo;t get to your wallet, those funds can sit untouched indefinitely —
+            even when the people you&rsquo;d want to have them are right there.
           </p>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <div style={{ display: 'grid', gap: '0.875rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             {[
-              {
-                icon: Lock,
-                label: 'Share your phrase',
-                detail: 'Gives someone full access today — not just someday.',
-              },
-              {
-                icon: Shield,
-                label: 'Use a custodian',
-                detail: 'Trust a company to still be there, and to act, when it matters.',
-              },
-              {
-                icon: Bell,
-                label: 'Write it down',
-                detail: 'Relies on the right person finding it and knowing what to do.',
-              },
-            ].map(({ icon: Icon, label, detail }) => (
+              { label: 'Share your phrase', detail: 'Gives someone full access today — not just someday.' },
+              { label: 'Use a custodian', detail: 'Trust a company to still be there, and to act, when it matters.' },
+              { label: 'Write it down', detail: 'Relies on the right person finding it and knowing what to do.' },
+            ].map(({ label, detail }) => (
               <div
                 key={label}
-                className="rounded-2xl border p-5"
-                style={{ background: 'var(--surface-muted)', borderColor: 'var(--border)' }}
+                style={{
+                  background: 'rgba(192,90,74,0.06)',
+                  border: '1px solid rgba(192,90,74,0.14)',
+                  borderRadius: 16,
+                  padding: '1.25rem',
+                }}
               >
-                <div
-                  className="mb-3 flex size-9 items-center justify-center rounded-xl"
-                  style={{ background: 'rgba(186,43,76,0.08)' }}
-                >
-                  <Icon className="size-4" style={{ color: 'var(--danger)' }} />
-                </div>
-                <p className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>{label}</p>
-                <p className="mt-1 text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>{detail}</p>
+                <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.88rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.5rem' }}>{label}</p>
+                <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.65 }}>{detail}</p>
               </div>
             ))}
           </div>
 
           <div
-            className="mt-8 rounded-2xl border-l-4 p-6"
             style={{
-              borderLeftColor: 'var(--accent)',
-              background: 'rgba(18,45,69,0.04)',
-              borderTopColor: 'var(--border)',
-              borderRightColor: 'var(--border)',
-              borderBottomColor: 'var(--border)',
-              borderWidth: '1px',
-              borderLeftWidth: '4px',
+              marginTop: '2rem',
+              padding: '1.25rem 1.5rem',
+              borderLeft: '3px solid var(--accent)',
+              background: 'rgba(200,144,42,0.05)',
+              borderRadius: '0 12px 12px 0',
             }}
           >
-            <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-2)' }}>
-              Afterlife takes another approach. You keep full control while you&apos;re here.
+            <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.9rem', color: 'var(--ink-2)', lineHeight: 1.7, margin: 0 }}>
+              Afterlife takes another approach. You keep full control while you&rsquo;re here.
               If you stop checking in, the rules you set decide where the money goes.
             </p>
           </div>
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── How it works ─────────────────────────────────────── */}
-      <section id="how-it-works" className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-3xl">
-          <SectionLabel>How it works</SectionLabel>
-          <h2
-            className="display text-balance text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
-            Four steps. Then you just live your life.
+      {/* ── How it works ── */}
+      <section id="how-it-works" className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '40rem' }}>
+          <Label>How it works</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '2.5rem', textWrap: 'balance' }}>
+            Four steps.<br />Then you just live your life.
           </h2>
 
-          <div className="mt-12 space-y-8">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
             {[
-              {
-                n: '1',
-                title: 'Create your vault',
-                body: 'Give it a name and add the USDC you want to set aside. You can add more later, or take some back.',
-              },
-              {
-                n: '2',
-                title: 'Choose your people',
-                body: 'Add up to 10 beneficiaries by wallet address and decide how much each one receives. Shares must add up to exactly 100%. If you want equal portions, one tap splits them evenly.',
-              },
-              {
-                n: '3',
-                title: 'Set your check-in window',
-                body: 'Choose how long Afterlife should wait after your last sign of life — anywhere from 7 days to 10 years. Then, every so often, press "I\'m Alive." The clock starts over each time.',
-              },
-              {
-                n: '4',
-                title: 'If you stop checking in, it passes on',
-                body: 'After your window runs out, anyone can trigger the release. Then anyone can press "Pay Everyone" to send every beneficiary their share in one transaction. Your beneficiaries don\'t have to sign anything to receive it.',
-              },
+              { n: '1', title: 'Create your vault', body: 'Give it a name and add the USDC you want to set aside. You can add more later, or take some back.' },
+              { n: '2', title: 'Choose your people', body: 'Add up to 10 beneficiaries by wallet address and decide how much each one receives. Shares must add up to exactly 100%.' },
+              { n: '3', title: 'Set your check-in window', body: 'Choose how long Afterlife should wait after your last sign of life — from 7 days to 10 years. Then, every so often, press "I\'m Alive." The clock resets each time.' },
+              { n: '4', title: 'If you stop, it passes on', body: 'After your window runs out, anyone can trigger the release, then pay everyone in one transaction. Your beneficiaries don\'t have to sign anything to receive it.' },
             ].map(({ n, title, body }) => (
-              <div key={n} className="flex gap-5">
+              <div key={n} style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
                 <div
-                  className="display flex size-10 shrink-0 items-center justify-center rounded-2xl text-sm font-bold text-white"
-                  style={{ background: 'var(--accent)', marginTop: 2 }}
+                  style={{
+                    flexShrink: 0,
+                    width: 32,
+                    height: 32,
+                    borderRadius: 9999,
+                    border: '1px solid rgba(255,248,238,0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    color: 'var(--accent)',
+                    marginTop: 2,
+                  }}
                 >
                   {n}
                 </div>
                 <div>
-                  <p className="display text-base font-bold" style={{ color: 'var(--ink)' }}>{title}</p>
-                  <p className="text-pretty mt-1 text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{body}</p>
+                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '1rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.4rem', letterSpacing: '-0.01em' }}>{title}</p>
+                  <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.875rem', color: 'var(--ink-2)', lineHeight: 1.75, margin: 0, maxWidth: '48ch' }}>{body}</p>
                 </div>
               </div>
             ))}
           </div>
 
           <div
-            className="mt-10 rounded-2xl border p-5 text-sm leading-relaxed"
-            style={{ background: 'var(--surface-muted)', borderColor: 'var(--border)', color: 'var(--ink-2)' }}
+            style={{
+              marginTop: '2.5rem',
+              padding: '1.1rem 1.35rem',
+              background: 'rgba(255,248,238,0.03)',
+              border: '1px solid rgba(255,248,238,0.09)',
+              borderRadius: 14,
+            }}
           >
-            <strong style={{ color: 'var(--ink)' }}>Good to know:</strong> When you withdraw funds or update
-            your beneficiaries, that also counts as checking in. Adding funds does not.
-            Use &ldquo;I&apos;m Alive&rdquo; for that.
+            <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.82rem', color: 'var(--muted)', lineHeight: 1.7, margin: 0 }}>
+              <strong style={{ color: 'var(--ink-2)' }}>Good to know:</strong>{' '}
+              When you withdraw funds or update your beneficiaries, that also counts as checking in. Adding funds does not. Use &ldquo;I&rsquo;m Alive&rdquo; for that.
+            </p>
           </div>
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── Features ─────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 max-w-2xl">
-            <SectionLabel>Features</SectionLabel>
-            <h2
-              className="display text-balance text-3xl font-bold sm:text-4xl"
-              style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-            >
-              Built to be simple, and built so it can&apos;t be quietly changed.
-            </h2>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: Lock,
-                title: 'You stay in control while you\'re here',
-                body: 'Until the window runs out, the vault is yours. Add USDC, withdraw it, update your beneficiaries, or close the vault and get your remaining balance back.',
-              },
-              {
-                icon: Coins,
-                title: 'Shares paid exactly as you set them',
-                body: 'Set each person\'s share in fine increments (0.01%). The last beneficiary also gets any leftover rounding amount — the whole balance goes out and nothing is left behind.',
-              },
-              {
-                icon: Users,
-                title: 'Beneficiaries don\'t have to do anything',
-                body: 'Anyone can pay everyone in a single transaction. Your beneficiaries never need to sign or keep funds on hand for fees. They only need the wallet address you named.',
-              },
-              {
-                icon: Shield,
-                title: 'One problem doesn\'t hold up everyone else',
-                body: 'If one beneficiary\'s address can\'t receive USDC, Afterlife skips that person and pays the others. The skipped share stays set aside — it isn\'t given to anyone else.',
-              },
-              {
-                icon: Lock,
-                title: 'No admin keys. No upgrades. No pause button.',
-                body: 'Nobody — including the people who built Afterlife — can change the rules, freeze your vault, or move your funds. The contract has no owner and can\'t be upgraded.',
-              },
-              {
-                icon: Coins,
-                title: 'USDC only, start to finish',
-                body: 'You deposit USDC and your beneficiaries receive USDC. On Arc, network fees are paid in USDC too — so you don\'t need a separate token to use it.',
-              },
-              {
-                icon: Users,
-                title: 'Family can contribute',
-                body: 'Anyone can add USDC to an active vault, so a partner or relative can contribute to the same plan. Only you can withdraw from it.',
-              },
-              {
-                icon: Eye,
-                title: 'See where things stand at a glance',
-                body: 'Your dashboard shows every vault you own with a live countdown. Beneficiaries have their own Inheritances page that shows each vault naming them and their share.',
-              },
-            ].map(({ icon: Icon, title, body }) => (
-              <div
-                key={title}
-                className="rounded-3xl border p-6 transition-shadow hover:shadow-md"
-                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-              >
-                <div
-                  className="mb-4 flex size-10 items-center justify-center rounded-xl"
-                  style={{ background: 'rgba(18,45,69,0.07)' }}
-                >
-                  <Icon className="size-5" style={{ color: 'var(--ink)' }} />
-                </div>
-                <p className="display mb-2 text-sm font-bold leading-snug" style={{ color: 'var(--ink)' }}>{title}</p>
-                <p className="text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Divider />
-
-      {/* ── Who it's for ─────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-3xl">
-          <SectionLabel>Who it&apos;s for</SectionLabel>
-          <h2
-            className="display text-balance text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
-            For anyone who&apos;s ever wondered, &ldquo;What if?&rdquo;
+      {/* ── Features ── */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '52rem' }}>
+          <Label>Features</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '2.5rem', maxWidth: '28ch', textWrap: 'balance' }}>
+            Built to be simple, and built so it can&rsquo;t be quietly changed.
           </h2>
 
-          <div className="mt-10 space-y-5">
+          <div style={{ display: 'grid', gap: '1px', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', background: 'rgba(255,248,238,0.07)', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(255,248,238,0.07)' }}>
             {[
-              {
-                who: 'Parents and partners',
-                detail: 'You hold savings in USDC and want them to go to your family without asking anyone\'s permission and without anyone needing your recovery phrase.',
-              },
-              {
-                who: 'People who travel, sail, climb, or work far from home',
-                detail: 'Set a window that fits how you live. A few weeks off the grid won\'t trigger anything, and a long silence will.',
-              },
-              {
-                who: 'Builders and freelancers paid in USDC',
-                detail: 'Your income already lives on-chain. Afterlife gives part of it a plan, split among the people or causes you choose.',
-              },
-              {
-                who: 'Anyone who worries about losing access',
-                detail: 'If you lose your wallet and can\'t check in, your vault still goes to the people you named — so your funds aren\'t simply lost.',
-              },
-              {
-                who: 'The curious and careful',
-                detail: 'Want to see how it works before trusting it with anything that matters? Afterlife is currently on testnet, so you can try every step without real money.',
-              },
-            ].map(({ who, detail }) => (
+              { title: 'You stay in control while you\'re here', body: 'Add, withdraw, update beneficiaries, or close the vault for a full refund — until the window runs out, it\'s yours.' },
+              { title: 'Shares paid exactly as you set them', body: 'Set each person\'s share in 0.01% increments. The last beneficiary also absorbs any rounding — the whole balance goes out.' },
+              { title: 'Beneficiaries don\'t have to do anything', body: 'Anyone can pay everyone in a single transaction. Your beneficiaries never need to sign or keep funds on hand for gas.' },
+              { title: 'One problem doesn\'t block everyone', body: 'If one address can\'t receive USDC, Afterlife skips it and pays the others. The skipped share isn\'t redistributed.' },
+              { title: 'No admin keys. No upgrades. No pause.', body: 'Nobody — including the people who built this — can change the rules, freeze your vault, or move your funds.' },
+              { title: 'USDC only, start to finish', body: 'You deposit USDC and your beneficiaries receive USDC. On Arc, fees are paid in USDC too — no separate token needed.' },
+              { title: 'Family can contribute', body: 'Anyone can add USDC to an active vault. Only you can withdraw from it.' },
+              { title: 'See everything at a glance', body: 'Your dashboard shows every vault with a live countdown. Beneficiaries have their own Inheritances page.' },
+            ].map(({ title, body }) => (
+              <div
+                key={title}
+                style={{ background: 'var(--bg)', padding: '1.5rem 1.625rem' }}
+                className="hover:bg-[rgba(255,248,238,0.02)] transition-colors"
+              >
+                <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.9rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.5rem', letterSpacing: '-0.01em', lineHeight: 1.35 }}>{title}</p>
+                <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.7, margin: 0 }}>{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Rule />
+
+      {/* ── Who it's for ── */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '40rem' }}>
+          <Label>Who it&rsquo;s for</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '2.5rem', textWrap: 'balance' }}>
+            For anyone who&rsquo;s ever wondered, &ldquo;What if?&rdquo;
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid rgba(255,248,238,0.09)', borderRadius: 16, overflow: 'hidden' }}>
+            {[
+              { who: 'Parents and partners', detail: 'Hold savings in USDC and want them to go to your family without anyone needing your recovery phrase.' },
+              { who: 'People who travel, sail, or work far from home', detail: 'Set a window that fits how you live. A few weeks off the grid won\'t trigger anything — a long silence will.' },
+              { who: 'Builders and freelancers paid in USDC', detail: 'Your income lives on-chain. Afterlife gives part of it a plan, split among the people or causes you choose.' },
+              { who: 'Anyone who worries about losing access', detail: 'If you lose your wallet and can\'t check in, your vault still goes to the people you named.' },
+              { who: 'The curious', detail: 'Try every step on testnet without real money before you commit anything that matters.' },
+            ].map(({ who, detail }, i, arr) => (
               <div
                 key={who}
-                className="flex gap-4 rounded-2xl border p-5"
-                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                style={{
+                  padding: '1.25rem 1.5rem',
+                  borderBottom: i < arr.length - 1 ? '1px solid rgba(255,248,238,0.07)' : 'none',
+                  background: 'rgba(255,248,238,0.02)',
+                  display: 'flex',
+                  gap: '1rem',
+                  alignItems: 'flex-start',
+                }}
+                className="hover:bg-[rgba(255,248,238,0.03)] transition-colors"
               >
-                <div
-                  className="mt-0.5 size-2 shrink-0 rounded-full"
-                  style={{ background: 'var(--accent)', marginTop: 6 }}
-                />
+                <span style={{ color: 'var(--accent)', marginTop: '0.35rem', fontSize: '0.7rem', flexShrink: 0 }}>◆</span>
                 <div>
-                  <p className="display text-sm font-bold" style={{ color: 'var(--ink)' }}>{who}</p>
-                  <p className="text-pretty mt-1 text-xs leading-relaxed" style={{ color: 'var(--muted)' }}>{detail}</p>
+                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.9rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.3rem', letterSpacing: '-0.01em' }}>{who}</p>
+                  <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.82rem', color: 'var(--muted)', lineHeight: 1.7, margin: 0, maxWidth: '50ch' }}>{detail}</p>
                 </div>
               </div>
             ))}
@@ -394,59 +374,48 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── Trust & Security ─────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-3xl">
-          <SectionLabel>Trust &amp; security</SectionLabel>
-          <h2
-            className="display text-balance text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
+      {/* ── Trust & Security ── */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '40rem' }}>
+          <Label>Trust &amp; security</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '2.5rem', textWrap: 'balance' }}>
             What you can count on, and what you should know.
           </h2>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {/* What the code guarantees */}
-            <div
-              className="rounded-3xl border p-6"
-              style={{ background: 'rgba(26,128,71,0.04)', borderColor: 'rgba(26,128,71,0.18)' }}
-            >
-              <p className="display mb-4 text-sm font-bold" style={{ color: 'var(--success)' }}>What the code guarantees</p>
-              <ul className="space-y-3">
+          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+            <div style={{ background: 'rgba(90,156,106,0.05)', border: '1px solid rgba(90,156,106,0.15)', borderRadius: 16, padding: '1.5rem' }}>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', fontWeight: 700, color: 'var(--success)', marginBottom: '1rem', letterSpacing: '-0.01em' }}>What the code guarantees</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {[
                   'No one else holds the keys. No owner, no admin, no pause switch, no upgrade path.',
                   'Funds go only where you said. Anyone may trigger a release, but nobody can redirect the money.',
                   'Nothing happens early. Funds can\'t be released while your window is still open.',
-                  'One problem doesn\'t hold up everyone. A blocked address is skipped; others are paid.',
-                  'Everything is on the record. Every event is public on the Arc blockchain.',
-                ].map((item) => (
-                  <li key={item} className="flex gap-2.5 text-xs leading-relaxed" style={{ color: 'var(--ink-2)' }}>
-                    <span className="mt-0.5 shrink-0 text-sm" style={{ color: 'var(--success)' }}>✓</span>
+                  'One problem doesn\'t block everyone. A blocked address is skipped; others are paid.',
+                  'Everything is on the record — public on the Arc blockchain.',
+                ].map(item => (
+                  <li key={item} style={{ display: 'flex', gap: '0.625rem', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.8rem', color: 'var(--ink-2)', lineHeight: 1.65 }}>
+                    <span style={{ color: 'var(--success)', flexShrink: 0, marginTop: '0.05em' }}>✓</span>
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* What you should know */}
-            <div
-              className="rounded-3xl border p-6"
-              style={{ background: 'rgba(186,43,76,0.04)', borderColor: 'rgba(186,43,76,0.16)' }}
-            >
-              <p className="display mb-4 text-sm font-bold" style={{ color: 'var(--danger)' }}>What you should know</p>
-              <ul className="space-y-3">
+            <div style={{ background: 'rgba(192,90,74,0.05)', border: '1px solid rgba(192,90,74,0.14)', borderRadius: 16, padding: '1.5rem' }}>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', fontWeight: 700, color: 'var(--danger)', marginBottom: '1rem', letterSpacing: '-0.01em' }}>What you should know</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {[
-                  "It hasn't been audited. Please use only amounts you could afford to lose.",
+                  "It hasn't been audited. Use only amounts you could afford to lose.",
                   "There is no undo. Nobody can reverse a mistake for you.",
                   "It doesn't remind you. Set your own reminder; choose a window with plenty of margin.",
                   "Your vault is public. Balances and addresses are visible on-chain.",
                   "Tell your people. Afterlife doesn't contact beneficiaries — they need to know.",
                   "It isn't a legal will. It only covers the USDC you put in the vault.",
-                ].map((item) => (
-                  <li key={item} className="flex gap-2.5 text-xs leading-relaxed" style={{ color: 'var(--ink-2)' }}>
-                    <span className="mt-0.5 shrink-0 text-sm" style={{ color: 'var(--danger)' }}>!</span>
+                ].map(item => (
+                  <li key={item} style={{ display: 'flex', gap: '0.625rem', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.8rem', color: 'var(--ink-2)', lineHeight: 1.65 }}>
+                    <span style={{ color: 'var(--danger)', flexShrink: 0, marginTop: '0.05em' }}>!</span>
                     {item}
                   </li>
                 ))}
@@ -456,154 +425,192 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── FAQ ──────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-20">
-        <div className="mx-auto max-w-3xl">
-          <SectionLabel>FAQ</SectionLabel>
-          <h2
-            className="display mb-10 text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
+      {/* ── FAQ ── */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto" style={{ maxWidth: '40rem' }}>
+          <Label>FAQ</Label>
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: '2.5rem' }}>
             Common questions
           </h2>
 
-          <div className="space-y-5">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid rgba(255,248,238,0.09)', borderRadius: 16, overflow: 'hidden' }}>
             {[
               {
                 q: 'What exactly happens if I stop checking in?',
-                a: "Nothing happens right away. Once your inactivity window has fully passed, the vault becomes eligible for release. Someone — a beneficiary, a friend, or anyone else — presses \"Trigger Release,\" which locks in the balance for payout. Then anyone can press \"Pay Everyone\" to send every beneficiary their share, or each beneficiary can claim their own.",
+                a: 'Nothing happens right away. Once your window has fully passed, the vault becomes eligible for release. Someone — a beneficiary, a friend, or anyone else — presses "Trigger Release." Then anyone can press "Pay Everyone" to send every beneficiary their share, or each can claim individually.',
               },
               {
-                q: "What if I just forget, or I'm in the hospital, and my deadline passes?",
-                a: "The vault doesn't pay out by itself the moment your deadline passes. Someone has to trigger the release. Until that happens, checking in brings the vault back to normal. Once anyone triggers the release, though, it's final. Don't rely on this grace period. Choose a window with plenty of room to spare, and set yourself a reminder.",
+                q: "What if I forget, or I'm in the hospital, and my deadline passes?",
+                a: "The vault doesn't pay out the moment your deadline passes — someone has to trigger the release. Until that happens, checking in brings the vault back to normal. Once anyone triggers the release, it's final. Choose a window with plenty of margin and set yourself a reminder.",
               },
               {
-                q: "Do my beneficiaries need crypto, or gas, to receive their share?",
-                a: "No. On Arc, network fees are paid in USDC, and anyone can send every beneficiary their share in one transaction. Your beneficiaries don't have to sign anything or keep funds on hand. They only need a wallet address that can receive USDC.",
+                q: 'Do my beneficiaries need crypto to receive their share?',
+                a: 'No. On Arc, fees are paid in USDC, and anyone can send every beneficiary their share in one transaction. Your beneficiaries only need a wallet address that can receive USDC — they don\'t need to sign anything or hold gas.',
               },
               {
-                q: "Can I change my mind?",
-                a: "Yes, as long as your window hasn't run out. You can add or withdraw USDC, update your beneficiaries and their shares, or close the vault and get your full remaining balance back. Closing is permanent — if you change your mind later, you'll need to create a new vault.",
+                q: 'Can I change my mind?',
+                a: "Yes, as long as your window hasn't run out. You can add or withdraw USDC, update your beneficiaries and their shares, or close the vault for a full refund. Closing is permanent.",
               },
               {
-                q: "Can Afterlife, or anyone else, take my money?",
-                a: "No. The contract has no admin keys, no owner, and no upgrade mechanism. Nobody — including the people who built Afterlife — can move funds outside of the rules you set. The only way funds leave the vault is by your explicit action (withdraw or close) or by the normal release-and-claim process after your window expires.",
+                q: 'Can Afterlife, or anyone else, take my money?',
+                a: 'No. The contract has no admin keys, no owner, and no upgrade mechanism. Nobody — including the people who built Afterlife — can move funds outside of the rules you set.',
               },
               {
-                q: "What happens if one of my beneficiaries loses access to their wallet?",
-                a: "Their share will remain locked in the vault, unclaimed. It won't be redistributed to other beneficiaries. Update your beneficiary list before your window closes if you need to change an address — updating beneficiaries also counts as a check-in.",
+                q: "What if one of my beneficiaries loses access to their wallet?",
+                a: "Their share will remain locked in the vault, unclaimed. It won't be redistributed. Update your beneficiary list before your window closes if you need to change an address.",
               },
-            ].map(({ q, a }) => (
+            ].map(({ q, a }, i, arr) => (
               <details
                 key={q}
-                className="group rounded-2xl border p-5"
-                style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
+                style={{
+                  borderBottom: i < arr.length - 1 ? '1px solid rgba(255,248,238,0.07)' : 'none',
+                  background: 'rgba(255,248,238,0.02)',
+                }}
+                className="group"
               >
                 <summary
-                  className="display cursor-pointer select-none text-sm font-semibold"
-                  style={{ color: 'var(--ink)', listStyle: 'none' }}
+                  style={{
+                    padding: '1.1rem 1.5rem',
+                    cursor: 'pointer',
+                    listStyle: 'none',
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: 'var(--ink)',
+                    letterSpacing: '-0.01em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '1rem',
+                    userSelect: 'none',
+                  }}
+                  className="hover:text-[var(--ink)]"
                 >
-                  <span className="flex items-center justify-between gap-3">
-                    {q}
-                    <span
-                      className="shrink-0 text-lg font-light transition-transform group-open:rotate-45"
-                      style={{ color: 'var(--muted)', display: 'inline-block' }}
-                    >
-                      +
-                    </span>
+                  {q}
+                  <span
+                    style={{ flexShrink: 0, color: 'var(--accent)', fontSize: '1.2rem', fontWeight: 300, display: 'inline-block', transition: 'transform 0.2s' }}
+                    className="group-open:rotate-45"
+                  >
+                    +
                   </span>
                 </summary>
-                <p className="text-pretty mt-3 text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{a}</p>
+                <p style={{ padding: '0 1.5rem 1.1rem', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.85rem', color: 'var(--ink-2)', lineHeight: 1.75, margin: 0 }}>
+                  {a}
+                </p>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      <Divider />
+      <Rule />
 
-      {/* ── CTA footer ───────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-24 text-center">
-        <div className="mx-auto max-w-2xl">
+      {/* ── Final CTA ── */}
+      <section className="relative z-10 px-6 py-28 text-center">
+        <div className="mx-auto" style={{ maxWidth: '36rem' }}>
           <div
-            className="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl"
-            style={{ background: 'var(--accent)' }}
+            style={{
+              width: 48, height: 48,
+              borderRadius: 14,
+              background: 'var(--accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.75rem',
+            }}
           >
-            <Shield className="size-7 text-white" />
+            <svg width="20" height="24" viewBox="0 0 12 14" fill="none">
+              <path d="M6 0.5L11.5 3.5V7C11.5 10.0376 9.07614 12.7194 6 13.5C2.92386 12.7194 0.5 10.0376 0.5 7V3.5L6 0.5Z" fill="rgba(255,248,238,0.95)" />
+            </svg>
           </div>
-          <h2
-            className="display text-balance text-3xl font-bold sm:text-4xl"
-            style={{ letterSpacing: '-0.03em', color: 'var(--ink)' }}
-          >
+
+          <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.8rem, 5vw, 2.75rem)', fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1, color: 'var(--ink)', marginBottom: '1rem', textWrap: 'balance' }}>
             Make sure your USDC<br />finds its way home.
           </h2>
-          <p
-            className="text-pretty mx-auto mt-4 max-w-md text-base leading-relaxed"
-            style={{ color: 'var(--muted)' }}
-          >
+          <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.95rem', color: 'var(--ink-2)', lineHeight: 1.7, marginBottom: '2.25rem' }}>
             It takes five minutes to set up a vault. Everything else runs on its own.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.875rem', justifyContent: 'center' }}>
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 rounded-2xl px-8 py-4 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 hover:shadow-xl"
-              style={{ background: 'var(--accent)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'var(--accent)',
+                color: '#0e0c0a',
+                fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                padding: '0.8rem 2rem',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                transition: 'filter 0.15s',
+              }}
+              className="hover:brightness-110"
             >
-              Launch app <ArrowRight className="size-4" />
+              Launch app <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>
             <a
               href="https://github.com/0xNana/afterlife"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-2xl border px-8 py-4 text-sm font-semibold transition-colors hover:bg-black/5"
-              style={{ borderColor: 'var(--border-strong)', color: 'var(--ink-2)' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'transparent',
+                border: '1px solid rgba(255,248,238,0.14)',
+                color: 'var(--ink-2)',
+                fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: 500,
+                fontSize: '0.88rem',
+                padding: '0.8rem 2rem',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                transition: 'border-color 0.15s, color 0.15s',
+              }}
+              className="hover:border-[rgba(255,248,238,0.28)] hover:text-[var(--ink)]"
             >
               View on GitHub
             </a>
           </div>
 
-          <p className="mt-6 text-xs" style={{ color: 'var(--subtle)' }}>
-            Early software that hasn&apos;t been audited. Please start with small amounts.
+          <p style={{ marginTop: '1.75rem', fontSize: '0.72rem', color: 'var(--subtle)', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif' }}>
+            Early software — not yet audited. Please start with small amounts.
           </p>
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────────── */}
-      <footer
-        className="relative z-10 border-t px-6 py-8 text-center"
-        style={{ borderColor: 'var(--border)' }}
-      >
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 sm:flex-row sm:justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex size-6 items-center justify-center rounded-lg" style={{ background: 'var(--accent)' }}>
-              <Shield className="size-3 text-white" />
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: '1px solid rgba(255,248,238,0.07)', padding: '1.5rem 1.5rem', position: 'relative', zIndex: 10 }}>
+        <div className="mx-auto" style={{ maxWidth: '52rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ width: 22, height: 22, borderRadius: 7, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="9" height="11" viewBox="0 0 12 14" fill="none">
+                <path d="M6 0.5L11.5 3.5V7C11.5 10.0376 9.07614 12.7194 6 13.5C2.92386 12.7194 0.5 10.0376 0.5 7V3.5L6 0.5Z" fill="rgba(255,248,238,0.95)" />
+              </svg>
             </div>
-            <span className="display text-sm font-bold" style={{ color: 'var(--ink)' }}>Afterlife</span>
+            <span style={{ fontFamily: 'Georgia, serif', fontSize: '0.85rem', fontWeight: 700, color: 'var(--ink-2)', letterSpacing: '-0.01em' }}>Afterlife</span>
           </div>
-          <p className="text-xs" style={{ color: 'var(--subtle)' }}>
+          <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.72rem', color: 'var(--subtle)', margin: 0 }}>
             Runs on{' '}
-            <a href="https://arc.io" target="_blank" rel="noopener noreferrer" className="underline">
-              Arc
-            </a>
-            {' '}· USDC by{' '}
-            <a href="https://circle.com" target="_blank" rel="noopener noreferrer" className="underline">
-              Circle
-            </a>
-            {' '}· Contract:{' '}
+            <a href="https://arc.io" target="_blank" rel="noreferrer" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>Arc</a>
+            {' · '}USDC by{' '}
+            <a href="https://circle.com" target="_blank" rel="noreferrer" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>Circle</a>
+            {' · '}
             <a
               href="https://explorer.testnet.arc.io/address/0x4d64cb8bd361061b92fe983c7326e172eb6fef7b"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mono underline"
-              style={{ fontSize: '0.7rem' }}
+              target="_blank" rel="noreferrer"
+              style={{ fontFamily: 'monospace', fontSize: '0.68rem', color: 'var(--subtle)', textDecoration: 'underline' }}
             >
               0x4d64…fef7b
             </a>
           </p>
-          <p className="text-xs" style={{ color: 'var(--subtle)' }}>MIT License</p>
+          <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.72rem', color: 'var(--subtle)', margin: 0 }}>MIT License</p>
         </div>
       </footer>
     </div>

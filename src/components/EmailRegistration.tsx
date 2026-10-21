@@ -14,7 +14,7 @@ interface EmailRegistrationProps {
   label?: string
 }
 
-export function EmailRegistration({ vaultId, address, role, label = 'Get notified' }: EmailRegistrationProps) {
+export function EmailRegistration({ vaultId, address, role, label = 'Get notified by email' }: EmailRegistrationProps) {
   const [editing, setEditing] = useState(false)
   const [inputEmail, setInputEmail] = useState('')
   const { signMessage, isPending: isSigning } = useSignMessage()
@@ -31,7 +31,7 @@ export function EmailRegistration({ vaultId, address, role, label = 'Get notifie
         onSuccess: async (sig) => {
           const ok = await register(inputEmail, sig, msg)
           if (ok) {
-            toast.success('Email registered — you\'ll be notified when the vault releases.')
+            toast.success('Email registered.')
             setEditing(false)
             setInputEmail('')
           } else {
@@ -60,20 +60,26 @@ export function EmailRegistration({ vaultId, address, role, label = 'Get notifie
 
   if (isLoading) return null
 
-  // Already registered
+  // Registered state
   if (email && !editing) {
     return (
-      <div className="mt-1.5 flex items-center gap-2">
+      <div className="flex items-center gap-2">
         <span
-          className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
-          style={{ background: 'var(--success-bg)', color: 'var(--success)' }}
+          className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs"
+          style={{
+            background: 'rgba(90,156,106,0.10)',
+            border: '1px solid rgba(90,156,106,0.20)',
+            color: 'var(--success)',
+            fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+            fontWeight: 500,
+          }}
         >
           <Check className="size-3" />
           {email}
         </span>
         <button
           onClick={handleUnregister}
-          className="flex items-center gap-1 text-xs transition-opacity hover:opacity-70"
+          className="flex items-center gap-1 transition-opacity hover:opacity-70"
           style={{ color: 'var(--subtle)' }}
           title="Remove email"
         >
@@ -83,15 +89,15 @@ export function EmailRegistration({ vaultId, address, role, label = 'Get notifie
     )
   }
 
-  // Editing / adding
+  // Editing
   if (editing) {
     return (
-      <div className="mt-2 flex items-center gap-2">
+      <div className="flex items-center gap-2">
         <div
-          className="flex flex-1 items-center gap-2 rounded-xl border px-3 py-2"
+          className="flex flex-1 items-center gap-2 rounded-xl border px-3 py-1.5"
           style={{
-            background: 'var(--surface-muted)',
-            borderColor: isValidEmail ? 'var(--success)' : 'var(--border)',
+            background: 'rgba(255,248,238,0.04)',
+            borderColor: isValidEmail ? 'rgba(90,156,106,0.45)' : 'rgba(255,248,238,0.12)',
           }}
         >
           <Mail className="size-3.5 shrink-0" style={{ color: 'var(--subtle)' }} />
@@ -102,7 +108,10 @@ export function EmailRegistration({ vaultId, address, role, label = 'Get notifie
             onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
             placeholder="your@email.com"
             className="min-w-0 flex-1 bg-transparent text-xs outline-none"
-            style={{ color: 'var(--ink)' }}
+            style={{
+              color: 'var(--ink)',
+              fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+            }}
             autoFocus
           />
         </div>
@@ -125,12 +134,19 @@ export function EmailRegistration({ vaultId, address, role, label = 'Get notifie
     )
   }
 
-  // Default: show "get notified" prompt
+  // Default: prompt
   return (
     <button
       onClick={() => setEditing(true)}
-      className="mt-1.5 flex items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-70"
-      style={{ color: 'var(--subtle)' }}
+      className="flex items-center gap-1.5 text-xs transition-opacity hover:opacity-70"
+      style={{
+        color: 'var(--subtle)',
+        fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+        background: 'none',
+        border: 'none',
+        padding: 0,
+        cursor: 'pointer',
+      }}
     >
       <Bell className="size-3" />
       {label}

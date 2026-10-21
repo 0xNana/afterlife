@@ -3,120 +3,118 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ConnectKitButton } from 'connectkit'
-import { Shield, LayoutDashboard, Plus, Heart, Search, Menu, X } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState } from 'react'
 
 const LINKS = [
-  { href: '/dashboard',   label: 'My Vaults',     icon: LayoutDashboard },
-  { href: '/create',      label: 'Create',         icon: Plus },
-  { href: '/inheritances',label: 'Inheritances',   icon: Heart },
-  { href: '/explore',     label: 'Explore',        icon: Search },
+  { href: '/dashboard',    label: 'My Vaults' },
+  { href: '/create',       label: 'Create' },
+  { href: '/inheritances', label: 'Inheritances' },
+  { href: '/explore',      label: 'Explore' },
 ]
 
 export function Nav() {
   const path = usePathname()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [open, setOpen] = useState(false)
 
   return (
-    <>
-      <header
-        className="sticky top-0 z-40"
-        style={{
-          background: 'rgba(255,255,255,0.76)',
-          backdropFilter: 'blur(24px) saturate(190%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(190%)',
-          borderBottom: '1px solid rgba(15,35,54,0.08)',
-          boxShadow: '0 1px 0 rgba(255,255,255,0.6)',
-        }}
-      >
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 select-none">
-            <div
-              className="flex size-8 items-center justify-center rounded-[10px] shadow-sm"
-              style={{ background: 'var(--accent)' }}
-            >
-              <Shield className="size-[15px] text-white" strokeWidth={2.2} />
-            </div>
-            <span className="display text-[15px] font-bold tracking-tight" style={{ color: 'var(--ink)' }}>
-              Afterlife
-            </span>
-          </Link>
+    <header
+      className="sticky top-0 z-40"
+      style={{
+        background: 'rgba(14,12,10,0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,248,238,0.07)',
+      }}
+    >
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3.5">
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-0.5 sm:flex">
-            {LINKS.map(({ href, label, icon: Icon }) => {
-              const active = path === href || (href !== '/' && path.startsWith(href))
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={clsx(
-                    'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all',
-                    active
-                      ? 'text-white shadow-sm'
-                      : 'hover:bg-black/[0.05]',
-                  )}
-                  style={
-                    active
-                      ? { background: 'var(--accent)', color: 'white' }
-                      : { color: 'var(--ink-2)' }
-                  }
-                >
-                  <Icon className="size-3.5" strokeWidth={active ? 2.5 : 2} />
-                  {label}
-                </Link>
-              )
-            })}
-          </nav>
-
-          {/* Right side */}
-          <div className="flex items-center gap-2">
-            <ConnectKitButton />
-            {/* Mobile hamburger */}
-            <button
-              className="flex size-9 items-center justify-center rounded-xl transition-colors hover:bg-black/[0.05] sm:hidden"
-              style={{ color: 'var(--ink)' }}
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile drawer */}
-        {mobileOpen && (
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 select-none group">
           <div
-            className="border-t px-4 pb-4 pt-2 sm:hidden animate-fade-in"
-            style={{ borderColor: 'var(--border)' }}
+            className="flex size-7 items-center justify-center rounded-[8px] transition-opacity group-hover:opacity-80"
+            style={{ background: 'var(--accent)' }}
+            aria-hidden
           >
-            {LINKS.map(({ href, label, icon: Icon }) => {
-              const active = path === href || (href !== '/' && path.startsWith(href))
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className={clsx(
-                    'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-                    active ? 'text-white' : 'hover:bg-black/[0.05]',
-                  )}
-                  style={
-                    active
-                      ? { background: 'var(--accent)', color: 'white' }
-                      : { color: 'var(--ink-2)' }
-                  }
-                >
-                  <Icon className="size-4" strokeWidth={active ? 2.5 : 2} />
-                  {label}
-                </Link>
-              )
-            })}
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 0.5L11.5 3.5V7C11.5 10.0376 9.07614 12.7194 6 13.5C2.92386 12.7194 0.5 10.0376 0.5 7V3.5L6 0.5Z" fill="rgba(255,248,238,0.95)" />
+            </svg>
           </div>
-        )}
-      </header>
-    </>
+          <span
+            className="text-[15px] font-semibold tracking-tight transition-opacity group-hover:opacity-80"
+            style={{ color: 'var(--ink)', fontFamily: 'Georgia, serif', letterSpacing: '-0.01em' }}
+          >
+            Afterlife
+          </span>
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-0 sm:flex">
+          {LINKS.map(({ href, label }) => {
+            const active = path === href || (href !== '/' && path.startsWith(href))
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={clsx(
+                  'sans px-3.5 py-1.5 text-[13px] font-medium tracking-wide transition-colors rounded-lg',
+                  active
+                    ? ''
+                    : 'hover:text-[var(--ink)]',
+                )}
+                style={{
+                  color: active ? 'var(--accent)' : 'var(--muted)',
+                  fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                }}
+              >
+                {label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Right: wallet + hamburger */}
+        <div className="flex items-center gap-2">
+          <ConnectKitButton />
+          <button
+            className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-white/[0.06] sm:hidden"
+            style={{ color: 'var(--muted)' }}
+            onClick={() => setOpen(v => !v)}
+            aria-label="Menu"
+          >
+            {open
+              ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+              : <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M0 1H16M0 6H16M0 11H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div
+          className="border-t px-4 pb-5 pt-2 sm:hidden animate-fade-in"
+          style={{ borderColor: 'rgba(255,248,238,0.07)' }}
+        >
+          {LINKS.map(({ href, label }) => {
+            const active = path === href || (href !== '/' && path.startsWith(href))
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
+                style={{
+                  color: active ? 'var(--accent)' : 'var(--ink-2)',
+                  fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                }}
+              >
+                {label}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+    </header>
   )
 }

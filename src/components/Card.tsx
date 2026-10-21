@@ -16,14 +16,17 @@ export function Card({ children, className, inner, spectralTop, hover, style }: 
   const base = inner
     ? 'glass-inner rounded-2xl'
     : clsx(
-        'glass-card rounded-3xl overflow-hidden',
-        hover && 'transition-shadow duration-200 hover:shadow-[0_8px_32px_rgba(15,35,54,0.10)]',
+        'glass-card overflow-hidden transition-shadow duration-200',
+        hover && 'hover:shadow-[0_12px_48px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,248,238,0.14)_inset] cursor-pointer',
       )
 
   return (
-    <div className={clsx(base, className)} style={style}>
+    <div
+      className={clsx(base, className)}
+      style={{ borderRadius: 'var(--radius-card)', ...style }}
+    >
       {spectralTop && (
-        <div className="h-[3px] w-full" style={{ background: 'var(--spectral)' }} />
+        <div className="h-[2px] w-full" style={{ background: 'var(--spectral)', opacity: 0.7 }} />
       )}
       {children}
     </div>

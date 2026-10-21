@@ -11,8 +11,8 @@ interface SheetProps {
   spectral?: boolean
 }
 
-const SHEET_SPRING = { type: 'spring', stiffness: 400, damping: 36, mass: 0.8 } as const
-const OVERLAY_TRANSITION = { duration: 0.2, ease: 'easeOut' } as const
+const SHEET_SPRING = { type: 'spring', stiffness: 380, damping: 38, mass: 0.9 } as const
+const OVERLAY_TRANSITION = { duration: 0.22, ease: 'easeOut' } as const
 
 export function Sheet({ open, onClose, title, children, spectral }: SheetProps) {
   return (
@@ -27,16 +27,18 @@ export function Sheet({ open, onClose, title, children, spectral }: SheetProps) 
           onClick={onClose}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/25 backdrop-blur-[2px]" />
+          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.68)', backdropFilter: 'blur(4px)' }} />
 
-          {/* Sheet panel */}
+          {/* Sheet */}
           <motion.section
-            className="relative w-full max-w-lg overflow-hidden rounded-t-[28px]"
+            className="relative w-full max-w-lg overflow-hidden"
             style={{
-              background: 'rgba(255,255,255,0.94)',
-              backdropFilter: 'blur(40px) saturate(200%)',
-              WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-              boxShadow: '0 -4px 40px rgba(15,35,54,0.12)',
+              background: '#1a1612',
+              borderTop: '1px solid rgba(255,248,238,0.12)',
+              borderLeft: '1px solid rgba(255,248,238,0.07)',
+              borderRight: '1px solid rgba(255,248,238,0.07)',
+              borderRadius: '20px 20px 0 0',
+              boxShadow: '0 -8px 60px rgba(0,0,0,0.7)',
             }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
@@ -44,33 +46,37 @@ export function Sheet({ open, onClose, title, children, spectral }: SheetProps) 
             transition={SHEET_SPRING}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Spectral strip */}
             {spectral && (
-              <div className="h-[3px]" style={{ background: 'var(--spectral)' }} />
+              <div className="h-[2px]" style={{ background: 'var(--spectral)', opacity: 0.6 }} />
             )}
 
-            {/* Drag handle */}
+            {/* Drag pill */}
             <div className="flex justify-center pt-3 pb-0">
-              <div className="h-1 w-10 rounded-full" style={{ background: 'rgba(15,35,54,0.15)' }} />
+              <div className="h-[3px] w-10 rounded-full" style={{ background: 'rgba(255,248,238,0.15)' }} />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pb-3 pt-2">
-              <h2 className="display text-base font-bold" style={{ color: 'var(--ink)' }}>{title}</h2>
+            <div className="flex items-center justify-between px-6 pb-4 pt-3">
+              <h2
+                className="text-base font-semibold"
+                style={{ color: 'var(--ink)', fontFamily: 'Georgia, serif', letterSpacing: '-0.01em' }}
+              >
+                {title}
+              </h2>
               <button
                 onClick={onClose}
                 aria-label="Close"
-                className="flex size-8 items-center justify-center rounded-full transition-colors hover:bg-black/[0.06] active:bg-black/10"
-                style={{ color: 'var(--muted)' }}
+                className="flex size-7 items-center justify-center rounded-full transition-colors hover:bg-white/[0.07]"
+                style={{ color: 'var(--subtle)' }}
               >
-                <X className="size-4" />
+                <X className="size-3.5" />
               </button>
             </div>
 
-            <div className="h-px mx-5" style={{ background: 'var(--border)' }} />
+            <div className="h-px mx-6" style={{ background: 'rgba(255,248,238,0.07)' }} />
 
             {/* Body */}
-            <div className="max-h-[78dvh] overflow-y-auto px-5 pb-10 pt-5">
+            <div className="max-h-[76dvh] overflow-y-auto px-6 pb-10 pt-5">
               {children}
             </div>
           </motion.section>

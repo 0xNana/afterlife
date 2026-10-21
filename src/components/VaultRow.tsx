@@ -1,9 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, AlertTriangle, Clock } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { Card } from '@/components/Card'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Countdown } from '@/components/Countdown'
 import { useVault, useVaultDeadline } from '@/hooks/useVault'
@@ -19,7 +18,7 @@ export function VaultRow({ id, showActions }: VaultRowProps) {
   const { data: deadlineTs } = useVaultDeadline(id)
 
   if (isLoading) {
-    return <div className="skeleton h-28" />
+    return <div className="skeleton h-24" />
   }
   if (!data) return null
 
@@ -35,24 +34,46 @@ export function VaultRow({ id, showActions }: VaultRowProps) {
     <Link href={`/vault/${id}`} className="block group">
       <motion.div
         whileHover={{ y: -1 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
       >
-        <Card
-          className="p-5 cursor-pointer transition-shadow duration-200 group-hover:shadow-[0_6px_24px_rgba(15,35,54,0.10)]"
-          spectralTop={isExpiredSoon || isExpired}
+        <div
+          className="overflow-hidden transition-all duration-200"
+          style={{
+            background: 'rgba(255,248,238,0.04)',
+            border: '1px solid rgba(255,248,238,0.09)',
+            borderRadius: 'var(--radius-card)',
+            padding: '20px 22px',
+            boxShadow: 'var(--shadow-card)',
+          }}
         >
+          {/* Top line: urgency strip */}
+          {(isExpiredSoon || isExpired) && (
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{ background: 'var(--accent)', opacity: 0.7 }}
+            />
+          )}
+
           <div className="flex items-start justify-between gap-4">
             {/* Left */}
             <div className="flex-1 min-w-0 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="display truncate text-base font-bold" style={{ color: 'var(--ink)' }}>
+                <span
+                  className="truncate font-semibold"
+                  style={{ color: 'var(--ink)', fontFamily: 'Georgia, serif', fontSize: '1rem', letterSpacing: '-0.01em' }}
+                >
                   {displayName}
                 </span>
                 <StatusBadge status={statusNum} />
                 {(isExpiredSoon || isExpired) && (
                   <span
-                    className="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
-                    style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--warning)' }}
+                    className="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
+                    style={{
+                      background: 'rgba(200,144,42,0.10)',
+                      color: 'var(--accent)',
+                      fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif',
+                      fontWeight: 500,
+                    }}
                   >
                     <AlertTriangle className="size-3" />
                     {isExpired ? 'Expired' : 'Expiring soon'}
@@ -60,13 +81,15 @@ export function VaultRow({ id, showActions }: VaultRowProps) {
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--subtle)' }}>
-                <Clock className="size-3" />
-                <span>Vault #{id.toString()}</span>
-              </div>
+              <p
+                className="text-xs"
+                style={{ color: 'var(--subtle)', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif' }}
+              >
+                Vault #{id.toString()}
+              </p>
 
               {isActive && deadlineTs && (
-                <div className="mt-3">
+                <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,248,238,0.06)' }}>
                   <Countdown
                     deadline={Number(deadlineTs)}
                     windowSecs={Number(windowSecs as bigint)}
@@ -75,23 +98,32 @@ export function VaultRow({ id, showActions }: VaultRowProps) {
               )}
             </div>
 
-            {/* Right */}
-            <div className="flex shrink-0 flex-col items-end gap-2 pt-0.5">
-              <div className="text-right">
-                <p className="display text-xl font-bold tabular-nums" style={{ color: 'var(--ink)' }}>
-                  {formatUsdc(balance as bigint)}
-                </p>
-                <p className="text-xs font-medium" style={{ color: 'var(--subtle)' }}>USDC</p>
-              </div>
+            {/* Right: balance + arrow */}
+            <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
+              <p
+                className="font-bold tabular-nums"
+                style={{ color: 'var(--ink)', fontFamily: 'Georgia, serif', fontSize: '1.25rem', letterSpacing: '-0.03em' }}
+              >
+                {formatUsdc(balance as bigint)}
+              </p>
+              <p
+                className="text-xs"
+                style={{ color: 'var(--subtle)', fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif' }}
+              >
+                USDC
+              </p>
               {showActions && (
-                <ArrowRight
-                  className="size-4 transition-all duration-200 group-hover:translate-x-0.5"
+                <svg
+                  width="14" height="14" viewBox="0 0 14 14" fill="none"
+                  className="mt-1 transition-transform duration-200 group-hover:translate-x-0.5"
                   style={{ color: 'var(--subtle)' }}
-                />
+                >
+                  <path d="M3 7H11M8 4L11 7L8 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               )}
             </div>
           </div>
-        </Card>
+        </div>
       </motion.div>
     </Link>
   )
