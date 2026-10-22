@@ -1,7 +1,7 @@
-// Afterlife contract config — Arc Testnet
+// Afterlife contract config — Arc Mainnet
 export const AFTERLIFE_ADDRESS =
   (process.env.NEXT_PUBLIC_AFTERLIFE_ADDRESS as `0x${string}`) ||
-  '0x4d64cb8bd361061b92fe983c7326e172eb6fef7b'
+  '0xCBE6dF9722be9c40d18ed3d6263e42C74312C441'
 
 export const USDC_ADDRESS = '0x3600000000000000000000000000000000000000' as const
 export const USDC_DECIMALS = 6
@@ -15,6 +15,14 @@ export const ARC_TESTNET = {
   nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
   rpcUrls: { default: { http: ['https://rpc.testnet.arc.io'] } },
   blockExplorers: { default: { name: 'ArcScan', url: 'https://explorer.testnet.arc.io' } },
+} as const
+
+export const ARC_MAINNET = {
+  id: ARC_MAINNET_ID,
+  name: 'Arc',
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.mainnet.arc.io'] } },
+  blockExplorers: { default: { name: 'ArcScan', url: 'https://explorer.arc.io' } },
 } as const
 
 export const AFTERLIFE_ABI = [
@@ -253,9 +261,9 @@ export function formatAddress(addr: string) {
 }
 
 export function explorerTx(hash: string) {
-  return `https://explorer.testnet.arc.io/tx/${hash}`
+  return `https://explorer.arc.io/tx/${hash}`
 }
 
 export function explorerAddr(addr: string) {
-  return `https://explorer.testnet.arc.io/address/${addr}`
+  return `https://explorer.arc.io/address/${addr}`
 }

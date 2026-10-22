@@ -15,11 +15,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ConnectKitProvider
           theme="auto"
           customTheme={{
-            '--ck-font-family': "'DM Sans', sans-serif",
-            '--ck-primary-button-background': '#122d45',
-            '--ck-primary-button-hover-background': '#1061a6',
-            '--ck-body-background': '#fffcf7',
-            '--ck-body-color': '#122d45',
+            '--ck-font-family': "-apple-system, 'Helvetica Neue', Arial, sans-serif",
+            '--ck-primary-button-background': '#c8902a',
+            '--ck-primary-button-hover-background': '#e0a73a',
+            '--ck-body-background': '#1a1612',
+            '--ck-body-color': '#f5efe4',
             '--ck-border-radius': '16px',
           }}
         >
@@ -28,11 +28,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
             position="top-right"
             toastOptions={{
               style: {
-                fontFamily: "'DM Sans', sans-serif",
-                background: 'rgba(255,255,255,0.92)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(18,45,69,0.12)',
-                color: '#122d45',
+                fontFamily: "-apple-system, 'Helvetica Neue', Arial, sans-serif",
+                background: '#1a1612',
+                border: '1px solid rgba(255,248,238,0.12)',
+                color: '#f5efe4',
               },
             }}
           />

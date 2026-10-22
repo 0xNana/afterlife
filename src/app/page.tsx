@@ -584,11 +584,11 @@ export default function LandingPage() {
             <a href="https://circle.com" target="_blank" rel="noreferrer" style={{ color: 'var(--muted)', textDecoration: 'underline' }}>Circle</a>
             {' · '}
             <a
-              href="https://explorer.testnet.arc.io/address/0x4d64cb8bd361061b92fe983c7326e172eb6fef7b"
+              href="https://explorer.arc.io/address/0xCBE6dF9722be9c40d18ed3d6263e42C74312C441"
               target="_blank" rel="noreferrer"
               style={{ fontFamily: 'monospace', fontSize: '0.68rem', color: 'var(--subtle)', textDecoration: 'underline' }}
             >
-              0x4d64…fef7b
+              0xCBE6…C441
             </a>
           </p>
           <p style={{ fontFamily: '-apple-system, "Helvetica Neue", Arial, sans-serif', fontSize: '0.72rem', color: 'var(--subtle)', margin: 0 }}>MIT License</p>
