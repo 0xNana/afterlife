@@ -1,17 +1,14 @@
 'use client'
 
 import { createConfig, http } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
+import { ARC_MAINNET } from './contract'
 import { injected } from 'wagmi/connectors'
-import { ARC_MAINNET, ARC_TESTNET } from './contract'
 
 export const wagmiConfig = createConfig({
-  chains: [ARC_MAINNET, ARC_TESTNET, mainnet],
+  chains: [ARC_MAINNET],
   connectors: [injected()],
   transports: {
     [ARC_MAINNET.id]: http('https://rpc.mainnet.arc.io'),
-    [ARC_TESTNET.id]: http('https://rpc.testnet.arc.io'),
-    [mainnet.id]: http(),
   },
   ssr: true,
 })

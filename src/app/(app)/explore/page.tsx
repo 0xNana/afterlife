@@ -34,7 +34,7 @@ export default function ExplorePage() {
           <h1 className="display text-2xl font-bold" style={{ color: 'var(--ink)' }}>Explore</h1>
           <p className="mt-0.5 text-sm" style={{ color: 'var(--muted)' }}>
             {total > 0
-              ? `${total} vault${total !== 1 ? 's' : ''} on Arc Testnet`
+              ? `${total} vault${total !== 1 ? 's' : ''} on Arc`
               : 'No vaults yet — be the first'}
           </p>
         </div>

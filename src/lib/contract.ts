@@ -6,16 +6,7 @@ export const AFTERLIFE_ADDRESS =
 export const USDC_ADDRESS = '0x3600000000000000000000000000000000000000' as const
 export const USDC_DECIMALS = 6
 
-export const ARC_TESTNET_ID = 5042002
 export const ARC_MAINNET_ID = 5042
-
-export const ARC_TESTNET = {
-  id: ARC_TESTNET_ID,
-  name: 'Arc Testnet',
-  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
-  rpcUrls: { default: { http: ['https://rpc.testnet.arc.io'] } },
-  blockExplorers: { default: { name: 'ArcScan', url: 'https://explorer.testnet.arc.io' } },
-} as const
 
 export const ARC_MAINNET = {
   id: ARC_MAINNET_ID,

@@ -330,7 +330,7 @@ export default function LandingPage() {
               { who: 'People who travel, sail, or work far from home', detail: 'Set a window that fits how you live. A few weeks off the grid won\'t trigger anything — a long silence will.' },
               { who: 'Builders and freelancers paid in USDC', detail: 'Your income lives on-chain. Afterlife gives part of it a plan, split among the people or causes you choose.' },
               { who: 'Anyone who worries about losing access', detail: 'If you lose your wallet and can\'t check in, your vault still goes to the people you named.' },
-              { who: 'The curious', detail: 'Try every step on testnet without real money before you commit anything that matters.' },
+              { who: 'The careful', detail: 'Start with a small amount to see how every step works before you commit anything that matters.' },
             ].map(({ who, detail }, i, arr) => (
               <div
                 key={who}
