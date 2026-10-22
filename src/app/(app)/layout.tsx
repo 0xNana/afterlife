@@ -1,28 +1,50 @@
-import { Nav } from '@/components/Nav'
+import { Sidebar } from '@/components/Sidebar'
+
+const SIDEBAR_W = 220 // px — must match Sidebar.tsx
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-dvh" style={{ background: 'var(--bg-gradient)' }}>
-      {/* Subtle warm vignette in top-right */}
+    <div className="min-h-dvh" style={{ background: 'var(--bg-gradient)' }}>
+      {/* Warm ambient glow */}
       <div
         aria-hidden
         style={{
           position: 'fixed',
           top: 0, right: 0,
-          width: 480, height: 480,
+          width: 520, height: 520,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(200,144,42,0.06) 0%, transparent 70%)',
-          filter: 'blur(100px)',
+          background: 'radial-gradient(circle, rgba(200,144,42,0.05) 0%, transparent 70%)',
+          filter: 'blur(120px)',
           pointerEvents: 'none',
+          zIndex: 0,
         }}
       />
 
-      <div className="relative z-10">
-        <Nav />
-        <main className="mx-auto max-w-3xl px-4 pb-28 pt-10 animate-slide-up">
+      <Sidebar />
+
+      {/*
+        Mobile: full width, top-padded to clear the fixed header (~57px)
+        Desktop (lg): shift right by sidebar width so content never hides behind sidebar
+      */}
+      <main
+        className="relative z-10 animate-slide-up"
+        style={{
+          paddingTop: 'var(--content-pt, 80px)',
+          paddingBottom: '7rem',
+        }}
+      >
+        <style>{`
+          @media (min-width: 1024px) {
+            main { padding-left: ${SIDEBAR_W + 32}px; padding-top: 2.5rem; }
+          }
+          @media (max-width: 1023px) {
+            main { padding-left: 1rem; padding-right: 1rem; }
+          }
+        `}</style>
+        <div style={{ maxWidth: '48rem' }}>
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }
